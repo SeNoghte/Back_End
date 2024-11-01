@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Application.Event;
 
-public class SaveEventCommand : RequestModel<SaveEventResult>
+public class SaveEventCommand : IRequest<SaveEventResult>
 {
 }
 

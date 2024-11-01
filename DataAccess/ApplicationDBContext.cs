@@ -1,3 +1,4 @@
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -16,4 +17,6 @@ public class ApplicationDBContext : DbContext
     {
         optionsBuilder.UseNpgsql(configuration.GetConnectionString("JalaletoDB"));
     }
+    public DbSet<User> Users { get; set; }
+
 }

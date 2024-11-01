@@ -6,4 +6,17 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="Enum\**" />
+      <Compile Remove="Models\**" />
+      <EmbeddedResource Remove="Enum\**" />
+      <EmbeddedResource Remove="Models\**" />
+      <None Remove="Enum\**" />
+      <None Remove="Models\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Enums\" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
@@ -30,59 +31,29 @@ public class LoginResult:ResultModel
 public class LoginHandler : IRequestHandler<LoginCommand, LoginResult>
 {
     ApplicationDBContext applicationDB {  get; set; }
-    IConfiguration configuration { get; set; }
+    IIdentityService identityService { get; set; }
 
-    public LoginHandler(ApplicationDBContext applicationDB, IConfiguration configuration)
+    public LoginHandler(ApplicationDBContext applicationDB,
+        IIdentityService identityService)
     {
         this.applicationDB = applicationDB;
-        this.configuration = configuration;
+        this.identityService = identityService;
     }
     public async Task<LoginResult> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var result = new LoginResult();
         var user = await applicationDB.Users.SingleOrDefaultAsync(u => u.Email == request.Email);
-        if (user == null || !VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
+        if (user == null || !identityService.VerifyPassword(request.Password, user.PasswordHash, user.PasswordSalt))
         {
             result.Message = "ایمیل یا رمز عبور اشتباه است";
             return result;
         }
 
-        var token = GenerateJwtToken(user);
+        var token = identityService.GenerateJwtToken(user);
 
         result.Success = true;
         result.Token = token;
 
         return result;
-    }
-
-    private bool VerifyPassword(string password, string passwordHash, string passwordSalt)
-    {
-        byte[] storedHash = Convert.FromBase64String(passwordHash);
-        byte[] storedSalt = Convert.FromBase64String(passwordSalt);
-        using var hmac = new HMACSHA512(storedSalt);
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return computedHash.SequenceEqual(storedHash);
-    }
-
-    private string GenerateJwtToken(User user)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-        };
-
-        var token = new JwtSecurityToken(
-            configuration["JwtSettings:Issuer"],
-            configuration["JwtSettings:Audience"],
-            claims,
-            expires: DateTime.UtcNow.AddHours(double.Parse(configuration["JwtSettings:ExpiresInHours"])),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }

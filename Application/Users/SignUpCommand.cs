@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Domain.Entities;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using Application.Common.Services.IdentityService;
 
 namespace Application.Users;
 
@@ -28,9 +29,11 @@ public class SignUpResult : ResultModel
 public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 {
     public ApplicationDBContext applicationDB { get; set; }
-    public SignUpHandler(ApplicationDBContext applicationDB)
+    IIdentityService identityService { get; set; }
+    public SignUpHandler(ApplicationDBContext applicationDB, IIdentityService identityService)
     {
         this.applicationDB = applicationDB;
+        this.identityService = identityService;
     }
     public async Task<SignUpResult> Handle(SignUpCommand request, CancellationToken cancellationToken)
     {
@@ -69,7 +72,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
             return result;
         }
 
-        var (passwordHash, passwordSalt) = CreatePasswordHash(request.Password);
+        var (passwordHash, passwordSalt) = identityService.CreatePasswordHash(request.Password);
 
         var user = new User
         {
@@ -84,13 +87,5 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 
         result.Success = true;
         return result;
-    }
-
-    private (byte[] hash, byte[] salt) CreatePasswordHash(string password)
-    {
-        using var hmac = new HMACSHA512();
-        var salt = hmac.Key;
-        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        return (hash, salt);
     }
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Loader;
+using Application.Common.Services.IdentityService;
 using DataAccess;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,5 +16,6 @@ public static class ServiceExtensions
         });
 
         services.AddScoped<ApplicationDBContext>();
+        services.AddScoped<IIdentityService, IdentityService>();
     }
 }

@@ -36,6 +36,13 @@ public class IdentityService : IIdentityService
         return computedHash.SequenceEqual(storedHash);
     }
 
+    public IEnumerable<Claim> GetClaimsFromToken(string accessToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var jwtToken = handler.ReadJwtToken(accessToken);
+        return jwtToken.Claims;
+    }
+
     public string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]));

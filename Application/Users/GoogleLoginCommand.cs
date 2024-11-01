@@ -5,20 +5,18 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.Net.Http;
-using System.Security.Claims;
 using System.Text.Json;
 
 namespace Application.Users
 {
     public class GoogleLoginCommand : IRequest<GoogleLoginResult>
     {
-        public string Code { get; set; } 
+        public string Code { get; set; }
     }
 
     public class GoogleLoginResult : ResultModel
     {
-        public string Token { get; set; } 
+        public string Token { get; set; }
     }
 
     public class GoogleLoginHandler : IRequestHandler<GoogleLoginCommand, GoogleLoginResult>
@@ -40,9 +38,8 @@ namespace Application.Users
         {
             var result = new GoogleLoginResult();
 
-            //var accessToken = await ExchangeAuthCodeForAccessTokenAsync(request.Code);
-            var accessToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImM4OGQ4MDlmNGRiOTQzZGY1M2RhN2FjY2ZkNDc3NjRkMDViYTM5MWYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI0MDc0MDg3MTgxOTIuYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDkzNzQ5OTcxNzYzODQ5NTQ4MDEiLCJlbWFpbCI6Im1hZGFuaXBvdXI2NkBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiYXRfaGFzaCI6IkJNX0pvZ2hvZl9vSWdBREN1MW5sYVEiLCJpYXQiOjE3MzA0NzcyODAsImV4cCI6MTczMDQ4MDg4MH0.zryQNPOSxx1nO_tp34udAD5G1TSxD5a5lsGXLA8nl1_5fWYL-J5AH5_KngKcSV076QA8-cRm2owIysxTZpaMQHLXqg_vtKelxcyUM04J7x2gsv1DESHVn3t-IdnCjZUgnyHyfIqUn1KJxuzI_k3df_Lr9Y0h6NS-TiFPccDxwAX4kqEEhhuDVQkKfuSfs3j17R2OxMZXUiu24l-x_ZYbZyi5CuTA1mJLERzPCvE01m6ib-0VLlCCERX2MFYkNh_DxuGAW10LfFIfXnetwi59JbhLD2QjmNjqwDO4sqx3C9gPBKh5fubiPSCCFnmcjfRK096M9cQ6bz3Adi_YukUsOQ";
-
+            var accessToken = await ExchangeAuthCodeForAccessTokenAsync(request.Code);
+            //var accessToken = "jwt id_token" //use this for testing
             if (string.IsNullOrEmpty(accessToken))
             {
                 result.Message = "اطلاعات نامعتبر";
@@ -53,7 +50,6 @@ namespace Application.Users
 
             var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
             var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
-            name = "mahdi";
             var (passwordHash, passwordSalt) = _identityService.CreatePasswordHash(name); //google auth => password is name
 
             var user = new User
@@ -64,15 +60,17 @@ namespace Application.Users
                 Email = email
             };
 
-            var jwtToken = _identityService.GenerateJwtToken(user);
-
             bool userExists = await _dbContext.Users.AnyAsync(u => u.Email == email);
 
             if (!userExists)
             {
                 _dbContext.Users.Add(user);
-                await _dbContext.SaveChangesAsync();      
+                await _dbContext.SaveChangesAsync();
             }
+
+            user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+            var jwtToken = _identityService.GenerateJwtToken(user);
 
             result.Token = jwtToken;
             result.Success = true;

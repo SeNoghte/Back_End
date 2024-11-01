@@ -15,6 +15,8 @@ public static class ServiceExtensions
             config.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
         });
 
+        services.AddHttpClient();
+
         services.AddScoped<ApplicationDBContext>();
         services.AddScoped<IIdentityService, IdentityService>();
     }

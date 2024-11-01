@@ -15,5 +15,6 @@ public interface IIdentityService
 {
     public (byte[] hash, byte[] salt) CreatePasswordHash(string password);
     public bool VerifyPassword(string password, string passwordHash, string passwordSalt);
+    public IEnumerable<Claim> GetClaimsFromToken(string accessToken);
     public string GenerateJwtToken(User user);
 }

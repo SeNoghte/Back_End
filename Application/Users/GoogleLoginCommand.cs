@@ -11,7 +11,7 @@ namespace Application.Users
 {
     public class GoogleLoginCommand : IRequest<GoogleLoginResult>
     {
-        public string Code { get; set; }
+        public string AuthorizationCode { get; set; }
     }
 
     public class GoogleLoginResult : ResultModel
@@ -38,15 +38,14 @@ namespace Application.Users
         {
             var result = new GoogleLoginResult();
 
-            var accessToken = await ExchangeAuthCodeForAccessTokenAsync(request.Code);
-            //var accessToken = "jwt id_token" //use this for testing
-            if (string.IsNullOrEmpty(accessToken))
+            GoogleTokenResponse GToken = await ExchangeAuthCodeForTokensAsync(request.Code);        
+            if (GToken is null)
             {
                 result.Message = "اطلاعات نامعتبر";
                 return result;
             }
 
-            var claims = _identityService.GetClaimsFromToken(accessToken);
+            var claims = _identityService.GetClaimsFromToken(GToken.IdToken);
 
             var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
             var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
@@ -79,7 +78,7 @@ namespace Application.Users
         }
 
 
-        public async Task<string> ExchangeAuthCodeForAccessTokenAsync(string authorizationCode)
+        public async Task<GoogleTokenResponse> ExchangeAuthCodeForTokensAsync(string authorizationCode)
         {
             string? clientId = _configuration["Authentication:Google:ClientId"];
             string? clientSecret = _configuration["Authentication:Google:ClientSecret"];
@@ -102,7 +101,7 @@ namespace Application.Users
             var jsonResponse = await response.Content.ReadAsStringAsync();
             var tokenResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(jsonResponse);
 
-            return tokenResponse?.AccessToken;
+            return tokenResponse;
         }
     }
 }

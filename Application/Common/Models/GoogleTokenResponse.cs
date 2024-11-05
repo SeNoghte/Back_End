@@ -11,14 +11,14 @@ public class GoogleTokenResponse
     public int ExpiresIn { get; set; }
 
     [JsonPropertyName("scope")]
-    public string Scope { get; set; } // Add this line  
+    public string Scope { get; set; }
 
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; }
 
     [JsonPropertyName("id_token")]
-    public string IdToken { get; set; } // Add this line  
+    public string IdToken { get; set; }
 
     [JsonPropertyName("refresh_token")]
-    public string RefreshToken { get; set; } // Optional, since your JSON doesn't have this property  
+    public string RefreshToken { get; set; }
 }

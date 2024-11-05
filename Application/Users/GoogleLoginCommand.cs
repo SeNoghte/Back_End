@@ -38,7 +38,7 @@ namespace Application.Users
         {
             var result = new GoogleLoginResult();
 
-            GoogleTokenResponse GToken = await ExchangeAuthCodeForTokensAsync(request.Code);        
+            GoogleTokenResponse GToken = await ExchangeAuthCodeForTokensAsync(request.AuthorizationCode);        
             if (GToken is null)
             {
                 result.Message = "اطلاعات نامعتبر";

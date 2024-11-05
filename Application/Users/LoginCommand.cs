@@ -1,36 +1,25 @@
 ﻿using Application.Common.Models;
 using Application.Common.Services.IdentityService;
 using DataAccess;
-using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Users;
 
-public class LoginCommand:IRequest<LoginResult>
+public class LoginCommand : IRequest<LoginResult>
 {
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
-public class LoginResult:ResultModel
+public class LoginResult : ResultModel
 {
     public string? Token { get; set; }
 }
 
 public class LoginHandler : IRequestHandler<LoginCommand, LoginResult>
 {
-    ApplicationDBContext applicationDB {  get; set; }
+    ApplicationDBContext applicationDB { get; set; }
     IIdentityService identityService { get; set; }
 
     public LoginHandler(ApplicationDBContext applicationDB,

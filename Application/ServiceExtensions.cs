@@ -1,8 +1,7 @@
-using System.Reflection;
-using System.Runtime.Loader;
 using Application.Common.Services.IdentityService;
 using DataAccess;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Application;
 

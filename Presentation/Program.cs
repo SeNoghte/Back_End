@@ -1,11 +1,10 @@
-using System.Reflection;
-using System.Text;
 using Application;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,15 +47,6 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.RegisterApplicationServices();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.None; // Important for cross-origin requests
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure you are using HTTPS
-    options.LoginPath = "/Account/Login"; // Redirect here if not authenticated
-    options.LogoutPath = "/Account/Logout"; // Redirect here on logout
-    options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect here if access is denied
-});
 
 builder.Services.AddAuthentication(options =>
 {

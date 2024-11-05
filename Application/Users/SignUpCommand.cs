@@ -1,16 +1,10 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.IdentityService;
 using DataAccess;
+using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
-using Application.Common.Services.IdentityService;
 
 namespace Application.Users;
 

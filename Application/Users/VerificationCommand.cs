@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using DataAccess;
+using Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Application.Users
 
     public class VerificationResult : ResultModel
     {
-        public byte[]? HashCode { get; set; }
+        public Guid VerificationCodeId { get; set; }
     }
 
     public class VerficationHandler : IRequestHandler<VerificationCommand, VerificationResult>
@@ -25,9 +26,28 @@ namespace Application.Users
 
         private readonly ApplicationDBContext _dbContext;
 
-        public Task<VerificationResult> Handle(VerificationCommand request, CancellationToken cancellationToken)
+        public VerficationHandler(ApplicationDBContext dbContext)
         {
-            throw new NotImplementedException();
+            _dbContext = dbContext;
+        }
+        public async Task<VerificationResult> Handle(VerificationCommand request, CancellationToken cancellationToken)
+        {
+            var result = new VerificationResult();
+
+            //... logic for sending email
+            PendingVerification pv = new PendingVerification()
+            {
+                Id = Guid.NewGuid(),
+                Code = "11211",
+                Expiration = DateTime.UtcNow.AddMinutes(1)
+            };
+            _dbContext.Add(pv);
+            await _dbContext.SaveChangesAsync();
+
+            result.VerificationCodeId = pv.Id;
+            result.Success = true;
+
+            return result;
         }
     }
 }

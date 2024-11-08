@@ -1,4 +1,6 @@
 using Application.Common.Services.CleanupService;
+using Application.Common.Services.EmailService;
+using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
 using DataAccess;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,9 @@ public static class ServiceExtensions
 
         services.AddScoped<ApplicationDBContext>();
         services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.AddScoped<IGeneralServices, GeneralServices>();
+
         services.AddHostedService<CleanupService>();
     }
 }

@@ -31,5 +31,12 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [AllowAnonymous]
+        [HttpPost(nameof(SendVerificationCode))]
+        public async Task<ActionResult<VerificationResult>> SendVerificationCode([FromBody] VerificationCommand request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

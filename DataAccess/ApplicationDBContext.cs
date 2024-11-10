@@ -17,6 +17,8 @@ public class ApplicationDBContext : DbContext
     {
         optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     }
+
     public DbSet<User> Users { get; set; }
+    public DbSet<PendingVerification> PendingVerifications { get; set; }
 
 }

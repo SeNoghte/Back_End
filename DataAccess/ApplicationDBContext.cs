@@ -15,7 +15,7 @@ public class ApplicationDBContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(configuration.GetConnectionString("JalaletoDB"));
+        optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     }
     public DbSet<User> Users { get; set; }
 

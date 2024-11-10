@@ -68,7 +68,7 @@ namespace Application.Users
             }
 
             Random rnd = new Random();
-            string code = rnd.Next(100000, 999999).ToString();
+            string code = "12345";
             string subject = "کد تایید بچین";
 
             //await _emailService.SendMail(request.Email, code, subject);

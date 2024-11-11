@@ -49,14 +49,12 @@ namespace Application.Users
 
             var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
             var name = claims.FirstOrDefault(c => c.Type == "name")?.Value;
-            var (passwordHash, passwordSalt) = _identityService.CreatePasswordHash(name); //google auth => password is name
+
 
             var user = new User
             {
-                Username = name,
-                PasswordHash = Convert.ToBase64String(passwordHash),
-                PasswordSalt = Convert.ToBase64String(passwordSalt),
-                Email = email
+                Name = name,           
+                Email = email,
             };
 
             bool userExists = await _dbContext.Users.AnyAsync(u => u.Email == email);

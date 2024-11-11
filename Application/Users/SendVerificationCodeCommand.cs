@@ -15,7 +15,7 @@ namespace Application.Users
 
     public class SendVerificationCodeResult : ResultModel
     {
-        public Guid VerificationCodeId { get; set; }
+        public string VerificationCodeId { get; set; }
     }
 
     public class SendVerificationCodeCommandHandler : IRequestHandler<SendVerificationCodeCommand, SendVerificationCodeResult>
@@ -85,7 +85,7 @@ namespace Application.Users
 
             await _dbContext.SaveChangesAsync();
 
-            result.VerificationCodeId = pv.Id;
+            result.VerificationCodeId = pv.Id.ToString();
             result.Success = true;
 
             return result;

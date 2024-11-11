@@ -14,7 +14,7 @@ namespace Application.Users
 
     public class VerifyCodeResult : ResultModel
     {
-        public Guid VerificationCodeId { get; set; }
+        public string VerificationCodeId { get; set; }
     }
 
     public class VerifyCodeHandler : IRequestHandler<VerifyCodeCommand, VerifyCodeResult>
@@ -43,7 +43,7 @@ namespace Application.Users
             pv.IsVerified = true;
             await dBContext.SaveChangesAsync();
 
-            result.VerificationCodeId = pv.Id;
+            result.VerificationCodeId = pv.Id.ToString();
             result.Success = true;
 
             return result;

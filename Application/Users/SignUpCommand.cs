@@ -14,6 +14,7 @@ public class SignUpCommand : IRequest<SignUpResult>
     public string? Username { get; set; }
     public string Password { get; set; }
     public string Email { get; set; }
+    public string VerificationCodeId { get; set; }
 }
 
 public class SignUpResult : ResultModel
@@ -38,6 +39,16 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
     {
         var result = new SignUpResult();
 
+        var isVerified = await applicationDB.PendingVerifications
+            .AnyAsync(x => x.Id.ToString() == request.VerificationCodeId && x.IsVerified);
+
+        if(!isVerified)
+        {
+            result.Message = "ایمیل تایید نشده است";
+            return result;
+        }
+
+        
         var isValidEmail = _generalServices.CheckEmailFromat(request.Email);
 
         if (!isValidEmail)

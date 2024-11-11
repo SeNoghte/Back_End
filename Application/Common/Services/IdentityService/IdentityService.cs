@@ -16,7 +16,7 @@ public class IdentityService : IIdentityService
         this.configuration = configuration;
     }
     public (byte[] hash, byte[] salt) CreatePasswordHash(string password)
-    {
+    {       
         using var hmac = new HMACSHA512();
         var salt = hmac.Key;
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));

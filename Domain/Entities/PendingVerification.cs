@@ -12,5 +12,6 @@ namespace Domain.Entities
         public string Code { get; set; }
         public string Email { get; set; }
         public DateTime Expiration { get; set; }
+        public bool IsVerified { get; set; }
     }
 }

@@ -8,6 +8,9 @@ public class ApplicationDBContext : DbContext
 {
     protected readonly IConfiguration configuration;
 
+    public DbSet<User> Users { get; set; }
+    public DbSet<PendingVerification> PendingVerifications { get; set; }
+
     public ApplicationDBContext(IConfiguration configuration)
     {
         this.configuration = configuration;
@@ -17,8 +20,5 @@ public class ApplicationDBContext : DbContext
     {
         optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     }
-
-    public DbSet<User> Users { get; set; }
-    public DbSet<PendingVerification> PendingVerifications { get; set; }
 
 }

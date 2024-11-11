@@ -4,45 +4,38 @@ using Application.Common.Services.GeneralServices;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Users
 {
-    public class VerificationCommand : IRequest<VerificationResult>
+    public class SendVerificationCodeCommand : IRequest<SendVerificationCodeResult>
     {
         public string Email { get; set; }
-
     }
 
-    public class VerificationResult : ResultModel
+    public class SendVerificationCodeResult : ResultModel
     {
         public Guid VerificationCodeId { get; set; }
     }
 
-    public class VerficationHandler : IRequestHandler<VerificationCommand, VerificationResult>
+    public class SendVerificationCodeCommandHandler : IRequestHandler<SendVerificationCodeCommand, SendVerificationCodeResult>
     {
 
         private readonly ApplicationDBContext _dbContext;
         private readonly IEmailService _emailService;
         private readonly IGeneralServices generalServices;
 
-        public VerficationHandler(ApplicationDBContext dbContext,IEmailService emailService,
+        public SendVerificationCodeCommandHandler(ApplicationDBContext dbContext, IEmailService emailService,
             IGeneralServices generalServices)
         {
             _dbContext = dbContext;
             _emailService = emailService;
             this.generalServices = generalServices;
         }
-        public async Task<VerificationResult> Handle(VerificationCommand request, CancellationToken cancellationToken)
+        public async Task<SendVerificationCodeResult> Handle(SendVerificationCodeCommand request, CancellationToken cancellationToken)
         {
-            var result = new VerificationResult();
-           
+            var result = new SendVerificationCodeResult();
+
             var uExists = _dbContext.Users.Any(u => u.Email == request.Email);
 
             if (uExists)
@@ -50,15 +43,7 @@ namespace Application.Users
                 result.Message = "این ایمیل در سایت ثبت نام شده است";
                 return result;
             }
-            
-            var pvExists = _dbContext.PendingVerifications.Any(pv => pv.Email == request.Email);
 
-            if(pvExists)
-            {
-                result.Message = "ایمیل از قبل برای شما ارسال شده است";
-                return result;
-            }
-           
             var isValidEmail = generalServices.CheckEmailFromat(request.Email);
 
             if (!isValidEmail)
@@ -78,9 +63,26 @@ namespace Application.Users
                 Id = Guid.NewGuid(),
                 Code = code,
                 Email = request.Email,
-                Expiration = DateTime.UtcNow.AddMinutes(10)
+                Expiration = DateTime.UtcNow.AddMinutes(10),
+                IsVerified = false
             };
-            _dbContext.Add(pv);
+            var pvExists = await _dbContext.PendingVerifications.FirstOrDefaultAsync(pv => pv.Email == request.Email);
+
+            if (pvExists != null)
+            {
+                pvExists.Code = code;
+                pvExists.Expiration = DateTime.UtcNow.AddMinutes(10);
+                pvExists.IsVerified = false;
+
+                _dbContext.Update(pvExists);
+
+                pv.Id = pvExists.Id;
+            }
+            else
+            {
+                _dbContext.Add(pv);
+            }
+
             await _dbContext.SaveChangesAsync();
 
             result.VerificationCodeId = pv.Id;

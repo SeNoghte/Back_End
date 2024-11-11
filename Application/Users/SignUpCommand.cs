@@ -1,18 +1,20 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace Application.Users;
 
 public class SignUpCommand : IRequest<SignUpResult>
 {
-    public string Username { get; set; }
+    public string Name { get; set; }
+    public string? Username { get; set; }
     public string Password { get; set; }
     public string Email { get; set; }
+    public string VerificationCodeId { get; set; }
 }
 
 public class SignUpResult : ResultModel
@@ -22,19 +24,32 @@ public class SignUpResult : ResultModel
 
 public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 {
+    private readonly IGeneralServices _generalServices;
+
     public ApplicationDBContext applicationDB { get; set; }
     IIdentityService identityService { get; set; }
-    public SignUpHandler(ApplicationDBContext applicationDB, IIdentityService identityService)
+    public SignUpHandler(ApplicationDBContext applicationDB, IIdentityService identityService,
+        IGeneralServices generalServices)
     {
         this.applicationDB = applicationDB;
         this.identityService = identityService;
+        _generalServices = generalServices;
     }
     public async Task<SignUpResult> Handle(SignUpCommand request, CancellationToken cancellationToken)
     {
         var result = new SignUpResult();
 
-        var emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        var isValidEmail = Regex.IsMatch(request.Email, emailPattern, RegexOptions.IgnoreCase);
+        var isVerified = await applicationDB.PendingVerifications
+            .AnyAsync(x => x.Id.ToString() == request.VerificationCodeId && x.IsVerified);
+
+        if(!isVerified)
+        {
+            result.Message = "ایمیل تایید نشده است";
+            return result;
+        }
+
+        
+        var isValidEmail = _generalServices.CheckEmailFromat(request.Email);
 
         if (!isValidEmail)
         {
@@ -42,9 +57,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
             return result;
         }
 
-        var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";
-        var regex = new Regex(passwordPattern);
-        var isValidPass = regex.IsMatch(request.Password);
+        var isValidPass = _generalServices.CheckPasswordFormat(request.Password);
 
         if (!isValidPass)
         {
@@ -52,9 +65,26 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
             return result;
         }
 
-        if (request.Username.Length < 4)
+        if (!string.IsNullOrEmpty(request.Username))
         {
-            result.Message = "نام کاربری حداقل شامل 3 حرف باشد";
+            if (request.Username.Length < 3)
+            {
+                result.Message = "نام کاربری حداقل شامل 2 حرف باشد";
+                return result;
+            }
+
+            var userExists = await applicationDB.Users.AnyAsync(u => u.Username == request.Username);
+
+            if (userExists)
+            {
+                result.Message = "نام کاربری در سایت ثبت نام شده است";
+                return result;
+            }
+        }
+
+        if (request.Name.Length < 3)
+        {
+            result.Message = "نام کاربری حداقل شامل 2 حرف باشد";
             return result;
         }
 
@@ -70,6 +100,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 
         var user = new User
         {
+            Name = request.Name,
             Username = request.Username,
             PasswordHash = Convert.ToBase64String(passwordHash),
             PasswordSalt = Convert.ToBase64String(passwordSalt),

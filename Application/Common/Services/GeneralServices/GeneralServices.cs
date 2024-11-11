@@ -12,10 +12,17 @@ namespace Application.Common.Services.GeneralServices
     public class GeneralServices : IGeneralServices
     {
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";
 
         public bool CheckEmailFromat(string email)
         {
             return Regex.IsMatch(email, emailPattern, RegexOptions.IgnoreCase);
+        }
+
+        public bool CheckPasswordFormat(string password)
+        {
+            var regex = new Regex(passwordPattern);
+            return regex.IsMatch(password);
         }
     }
 }

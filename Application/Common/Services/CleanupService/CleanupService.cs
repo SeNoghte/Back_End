@@ -13,7 +13,7 @@ namespace Application.Common.Services.CleanupService
     public class CleanupService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly TimeSpan _cleanupInterval = TimeSpan.FromMinutes(5);
+        private readonly TimeSpan _cleanupInterval = TimeSpan.FromMinutes(30);
 
         public CleanupService(IServiceProvider serviceProvider)
         {

@@ -13,7 +13,6 @@ namespace Application.Groups
     public class GroupSearchCommand : IRequest<GroupSearchResult>
     {
         public string Name { get; set; }
-        public string SearcherId { get; set; }
     }
 
     public class GroupSearchResult : ResultModel

@@ -8,4 +8,8 @@ public class User
     public string Email { get; set; }
     public string? PasswordHash { get; set; }
     public string? PasswordSalt { get; set; }
+    public DateTime JoinedDate { get; set; }
+
+    public ICollection<UserGroup> Groups { get; set; }
+    public ICollection<Group> OwnedGroups { get; set; }
 }

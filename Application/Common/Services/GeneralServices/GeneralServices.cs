@@ -34,9 +34,9 @@ namespace Application.Common.Services.GeneralServices
             return regex.IsMatch(password);
         }
 
-        public async Task<bool> CheckUserExists(string userId)
+        public async Task<bool> CheckUserExists(Guid userId)
         {
-            return await dBContext.Users.AnyAsync(u => u.UserId.ToString() == userId);
+            return await dBContext.Users.AnyAsync(u => u.UserId == userId);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
@@ -13,17 +14,10 @@ using System.Threading.Tasks;
 namespace Application.Groups
 {
 
-    public class GroupCreateDto
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
     public class GroupCreateCommand : IRequest<GroupCreateResult>
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string OwnerId { get; set; }
     }
 
     public class GroupCreateResult : ResultModel
@@ -34,17 +28,29 @@ namespace Application.Groups
     public class GroupCreateHandler : IRequestHandler<GroupCreateCommand, GroupCreateResult>
     {
         private readonly ApplicationDBContext dBContext;
+        IIdentityService identityService {  get; set; }
 
-        public GroupCreateHandler(ApplicationDBContext dBContext)
+        public GroupCreateHandler(ApplicationDBContext dBContext, IIdentityService identityService)
         {
             this.dBContext = dBContext;
+            this.identityService = identityService;
         }
 
         public async Task<GroupCreateResult> Handle(GroupCreateCommand request, CancellationToken cancellationToken)
         {
+
             var result = new GroupCreateResult();
 
-            var ownerExist = await dBContext.Users.AnyAsync(u => u.UserId.ToString() == request.OwnerId);
+            var UserId = identityService.GetCurrentUserId();
+
+            if (UserId == null)
+            {
+                result.ErrorCode = 401;
+                result.Message = "Unauthorized";
+                return result;
+            }
+
+            var ownerExist = await dBContext.Users.AnyAsync(u => u.UserId == UserId);
 
             if (!ownerExist)
             {
@@ -71,7 +77,7 @@ namespace Application.Groups
                 Name = request.Name,
                 Description = request.Description,
                 CreatedDate = DateTime.UtcNow,
-                OwnerId = Guid.Parse(request.OwnerId)
+                OwnerId = (Guid)UserId
             };
 
             await dBContext.AddAsync(gp);

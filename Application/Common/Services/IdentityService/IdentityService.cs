@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,12 +12,16 @@ namespace Application.Common.Services.IdentityService;
 public class IdentityService : IIdentityService
 {
     IConfiguration configuration { get; set; }
-    public IdentityService(IConfiguration configuration)
+    IHttpContextAccessor httpContextAccessor { get; set; }
+
+    public IdentityService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
     {
         this.configuration = configuration;
+        this.httpContextAccessor = httpContextAccessor;
     }
+
     public (byte[] hash, byte[] salt) CreatePasswordHash(string password)
-    {       
+    {
         using var hmac = new HMACSHA512();
         var salt = hmac.Key;
         var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -59,5 +64,18 @@ public class IdentityService : IIdentityService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public Guid? GetCurrentUserId()
+    {
+        string? userIdStr = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        Guid UserId;
+
+        if(Guid.TryParse(userIdStr, out UserId))
+        {
+            return UserId;
+        }
+        return null;
     }
 }

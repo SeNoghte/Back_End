@@ -25,5 +25,6 @@ public static class ServiceExtensions
         services.AddScoped<IGeneralServices, GeneralServices>();
 
         services.AddHostedService<CleanupService>();
+        services.AddHttpContextAccessor();
     }
 }

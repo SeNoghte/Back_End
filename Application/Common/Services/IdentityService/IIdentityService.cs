@@ -17,4 +17,5 @@ public interface IIdentityService
     public bool VerifyPassword(string password, string passwordHash, string passwordSalt);
     public IEnumerable<Claim> GetClaimsFromToken(string accessToken);
     public string GenerateJwtToken(User user);
+    public Guid? GetCurrentUserId();
 }

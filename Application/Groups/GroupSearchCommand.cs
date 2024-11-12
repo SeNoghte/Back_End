@@ -1,9 +1,12 @@
 ﻿using Application.Common.Models;
 using Application.Common.Services.GeneralServices;
+using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using System.Xml.Linq;
 
 namespace Application.Groups
 {
@@ -22,18 +25,30 @@ namespace Application.Groups
     {
         private readonly ApplicationDBContext dBContext;
         private readonly IGeneralServices generalServices;
+        IIdentityService identityService {  get; set; }
 
-        public GroupSearchHandler(ApplicationDBContext dBContext, IGeneralServices generalServices)
+        public GroupSearchHandler(ApplicationDBContext dBContext, IGeneralServices generalServices,
+            IIdentityService identityService)
         {
             this.dBContext = dBContext;
             this.generalServices = generalServices;
+            this.identityService = identityService;
         }
 
         public async Task<GroupSearchResult> Handle(GroupSearchCommand request, CancellationToken cancellationToken)
         {
             var result = new GroupSearchResult();
 
-            var userExist = await generalServices.CheckUserExists(request.SearcherId);
+            var UserId= identityService.GetCurrentUserId();
+
+            if (UserId == null)
+            {
+                result.ErrorCode = 401;
+                result.Message = "Unauthorized";
+                return result;
+            }
+
+            var userExist = await generalServices.CheckUserExists((Guid)UserId);
 
             if (!userExist)
             {
@@ -45,6 +60,7 @@ namespace Application.Groups
             {
                 result.FilteredGroups = await dBContext.Groups.ToListAsync();
             }
+
             else
             {
                 result.FilteredGroups = await dBContext.Groups

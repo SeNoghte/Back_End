@@ -10,6 +10,8 @@ public class ApplicationDBContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<PendingVerification> PendingVerifications { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<UserGroup> UserGroups { get; set; }
 
     public ApplicationDBContext(IConfiguration configuration)
     {
@@ -35,6 +37,12 @@ public class ApplicationDBContext : DbContext
             .HasOne(ug => ug.Group)
             .WithMany(ug => ug.Members)
             .HasForeignKey(ug => ug.GroupId);
+
+        modelBuilder.Entity<Group>()
+            .HasOne(g => g.Owner)
+            .WithMany(u => u.OwnedGroups)
+            .HasForeignKey(g => g.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict);
 
     }
 }

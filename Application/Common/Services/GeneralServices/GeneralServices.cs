@@ -1,4 +1,6 @@
-﻿using MediatR;
+﻿using DataAccess;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
 using System.Collections.Generic;
@@ -12,7 +14,14 @@ namespace Application.Common.Services.GeneralServices
     public class GeneralServices : IGeneralServices
     {
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";
+        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";   
+        private readonly ApplicationDBContext dBContext;
+
+        public GeneralServices(ApplicationDBContext dBContext)
+        {
+            this.dBContext = dBContext;
+        }
+
 
         public bool CheckEmailFromat(string email)
         {
@@ -23,6 +32,11 @@ namespace Application.Common.Services.GeneralServices
         {
             var regex = new Regex(passwordPattern);
             return regex.IsMatch(password);
+        }
+
+        public async Task<bool> CheckUserExists(string userId)
+        {
+            return await dBContext.Users.AnyAsync(u => u.UserId.ToString() == userId);
         }
     }
 }

@@ -11,4 +11,5 @@ public class User
     public DateTime JoinedDate { get; set; }
 
     public ICollection<UserGroup> Groups { get; set; }
+    public ICollection<Group> OwnedGroups { get; set; }
 }

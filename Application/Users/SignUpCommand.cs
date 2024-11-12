@@ -105,7 +105,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
             PasswordHash = Convert.ToBase64String(passwordHash),
             PasswordSalt = Convert.ToBase64String(passwordSalt),
             Email = request.Email,
-            JoinedDate = DateTime.Now,       
+            JoinedDate = DateTime.UtcNow      
         };
 
         applicationDB.Users.Add(user);

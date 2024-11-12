@@ -21,4 +21,20 @@ public class ApplicationDBContext : DbContext
         optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<UserGroup>()
+            .HasKey(ug => new { ug.UserId, ug.GroupId });
+
+        modelBuilder.Entity<UserGroup>()
+            .HasOne(ug => ug.User)
+            .WithMany(ug => ug.Groups)
+            .HasForeignKey(ug => ug.UserId);
+
+        modelBuilder.Entity<UserGroup>()
+            .HasOne(ug => ug.Group)
+            .WithMany(ug => ug.Members)
+            .HasForeignKey(ug => ug.GroupId);
+
+    }
 }

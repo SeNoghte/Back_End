@@ -53,8 +53,9 @@ namespace Application.Users
 
             var user = new User
             {
-                Name = name,           
+                Name = name,
                 Email = email,
+                JoinedDate = DateTime.Now,
             };
 
             bool userExists = await _dbContext.Users.AnyAsync(u => u.Email == email);

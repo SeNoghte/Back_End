@@ -12,7 +12,7 @@ namespace Application.Groups
 {
     public class GroupSearchCommand : IRequest<GroupSearchResult>
     {
-        public string Name { get; set; }
+        public string Filter { get; set; }
     }
 
     public class GroupSearchResult : ResultModel
@@ -55,15 +55,16 @@ namespace Application.Groups
                 return result;
             }
 
-            if (request.Name == null)
+            if (request.Filter == null)
             {
-                result.FilteredGroups = await dBContext.Groups.ToListAsync();
+                result.FilteredGroups = await dBContext.Groups.OrderBy(gp => gp.Name).ToListAsync();
             }
 
             else
             {
                 result.FilteredGroups = await dBContext.Groups
-                    .Where(gp => gp.Name.Contains(request.Name))
+                    .Where(gp => gp.Name.Contains(request.Filter))
+                    .OrderBy(gp => gp.Name)
                     .ToListAsync();
             }
 

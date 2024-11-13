@@ -19,11 +19,16 @@ namespace Presentation.Controllers
             return await mediator.Send(request);
         }
 
-        [HttpPost(nameof(Search))]
-        public async Task<ActionResult<GroupSearchResult>> Search([FromBody] GroupSearchCommand request)
+        [HttpPost(nameof(GetGroups))]
+        public async Task<ActionResult<GroupSearchResult>> GetGroups([FromBody] GroupSearchCommand request)
         {
             return await mediator.Send(request);
         }
 
+        [HttpPost(nameof(Delete))]
+        public async Task<ActionResult<GroupDeleteResult>> Delete([FromBody] GroupDeleteCommand request)
+        {
+            return await mediator.Send(request);
+        }    
     }
 }

@@ -1,20 +1,15 @@
 ﻿using DataAccess;
-using MediatR;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+
 
 namespace Application.Common.Services.GeneralServices
 {
     public class GeneralServices : IGeneralServices
     {
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";   
+        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";
         private readonly ApplicationDBContext dBContext;
 
         public GeneralServices(ApplicationDBContext dBContext)
@@ -37,6 +32,11 @@ namespace Application.Common.Services.GeneralServices
         public async Task<bool> CheckUserExists(Guid userId)
         {
             return await dBContext.Users.AnyAsync(u => u.UserId == userId);
+        }
+
+        public async Task<Domain.Entities.Group> GetGroup(Guid groupId)
+        {
+            return await dBContext.Groups.Where(gp => gp.Id == groupId).FirstOrDefaultAsync();
         }
     }
 }

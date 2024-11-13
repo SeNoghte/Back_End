@@ -40,7 +40,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
         var result = new SignUpResult();
 
         var isVerified = await applicationDB.PendingVerifications
-            .AnyAsync(x => x.Id.ToString() == request.VerificationCodeId && x.IsVerified);
+            .AnyAsync(x => x.Id.ToString() == request.VerificationCodeId && x.Email == request.Email && x.IsVerified);
 
         if(!isVerified)
         {

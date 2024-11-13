@@ -38,7 +38,7 @@ namespace Application.Users
         {
             var result = new GoogleLoginResult();
 
-            GoogleTokenResponse GToken = await ExchangeAuthCodeForTokensAsync(request.AuthorizationCode);        
+            GoogleTokenResponse GToken = await ExchangeAuthCodeForTokensAsync(request.AuthorizationCode);
             if (GToken is null)
             {
                 result.Message = "اطلاعات نامعتبر";
@@ -55,7 +55,7 @@ namespace Application.Users
             {
                 Name = name,
                 Email = email,
-                JoinedDate = DateTime.Now,
+                JoinedDate = DateTime.UtcNow,
             };
 
             bool userExists = await _dbContext.Users.AnyAsync(u => u.Email == email);
@@ -79,11 +79,13 @@ namespace Application.Users
 
         public async Task<GoogleTokenResponse> ExchangeAuthCodeForTokensAsync(string authorizationCode)
         {
-            string? clientId = _configuration["Authentication:Google:ClientId"];
-            string? clientSecret = _configuration["Authentication:Google:ClientSecret"];
-            string? redirectUri = _configuration["Authentication:Google:RedirectUri"];
+            try
+            {
+                string? clientId = _configuration["Authentication:Google:ClientId"];
+                string? clientSecret = _configuration["Authentication:Google:ClientSecret"];
+                string? redirectUri = _configuration["Authentication:Google:RedirectUri"];
 
-            var requestData = new Dictionary<string, string>
+                var requestData = new Dictionary<string, string>
             {
                 { "code", authorizationCode },
                 { "client_id", clientId },
@@ -92,15 +94,20 @@ namespace Application.Users
                 { "grant_type", "authorization_code" }
             };
 
-            var requestContent = new FormUrlEncodedContent(requestData);
+                var requestContent = new FormUrlEncodedContent(requestData);
 
-            var response = await _httpClient.PostAsync("https://oauth2.googleapis.com/token", requestContent);
-            response.EnsureSuccessStatusCode();
+                var response = await _httpClient.PostAsync("https://oauth2.googleapis.com/token", requestContent);
+                response.EnsureSuccessStatusCode();
 
-            var jsonResponse = await response.Content.ReadAsStringAsync();
-            var tokenResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(jsonResponse);
+                var jsonResponse = await response.Content.ReadAsStringAsync();
+                var tokenResponse = JsonSerializer.Deserialize<GoogleTokenResponse>(jsonResponse);
 
-            return tokenResponse;
+                return tokenResponse;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

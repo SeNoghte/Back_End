@@ -3,7 +3,6 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
-
 namespace Application.Common.Services.GeneralServices
 {
     public class GeneralServices : IGeneralServices

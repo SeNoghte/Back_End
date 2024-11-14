@@ -4,6 +4,7 @@
     {
         public bool CheckEmailFromat(string email);
         public bool CheckPasswordFormat(string password);
+        public bool CheckUsernameFormat(string username);
         public Task<bool> CheckUserExists(Guid userId);
     }
 }

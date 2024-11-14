@@ -14,7 +14,8 @@ namespace Application.Common.Services.GeneralServices
     public class GeneralServices : IGeneralServices
     {
         string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-        string passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$";   
+        string passwordPattern = @"^[a-zA-Z0-9!@#\$%\^&\*\(\)_\+\-=\[\]{};':""\\|,.<>\/?]{8,}$";
+        string usernamePattern = @"^[a-zA-Z0-9_-]{2,20}$";
         private readonly ApplicationDBContext dBContext;
 
         public GeneralServices(ApplicationDBContext dBContext)
@@ -37,6 +38,11 @@ namespace Application.Common.Services.GeneralServices
         public async Task<bool> CheckUserExists(Guid userId)
         {
             return await dBContext.Users.AnyAsync(u => u.UserId == userId);
+        }
+
+        public bool CheckUsernameFormat(string username)
+        {
+            return Regex.IsMatch(username, usernamePattern, RegexOptions.IgnoreCase);
         }
     }
 }

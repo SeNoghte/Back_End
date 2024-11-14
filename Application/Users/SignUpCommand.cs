@@ -42,13 +42,13 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
         var isVerified = await applicationDB.PendingVerifications
             .AnyAsync(x => x.Id.ToString() == request.VerificationCodeId && x.IsVerified);
 
-        if(!isVerified)
+        if (!isVerified)
         {
             result.Message = "ایمیل تایید نشده است";
             return result;
         }
 
-        
+
         var isValidEmail = _generalServices.CheckEmailFromat(request.Email);
 
         if (!isValidEmail)
@@ -61,15 +61,17 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 
         if (!isValidPass)
         {
-            result.Message = "رمز عبور باید شامل حداقل 8 حرف یک عدد، یک عدد و حروف بزرگ و کوچک انگبیسی باشد";
+            result.Message = "رمز عبور باید شامل حداقل 8 حرف باشد";
             return result;
         }
 
         if (!string.IsNullOrEmpty(request.Username))
         {
-            if (request.Username.Length < 3)
+            var isValidUsername = _generalServices.CheckUsernameFormat(request.Username);
+
+            if (!isValidUsername)
             {
-                result.Message = "نام کاربری حداقل شامل 2 حرف باشد";
+                result.Message = "نام کاربری حداقل شامل 2 حرف باشد و فقط حرف انگلیسی،عدد، '_' و'-' مجاز است";
                 return result;
             }
 
@@ -82,9 +84,9 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
             }
         }
 
-        if (request.Name.Length < 3)
+        if (request.Name.Length < 2)
         {
-            result.Message = "نام کاربری حداقل شامل 2 حرف باشد";
+            result.Message = "نام حداقل شامل 2 حرف باشد";
             return result;
         }
 

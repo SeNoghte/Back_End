@@ -45,5 +45,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(Profile))]
+        public async Task<ActionResult<ProfileInfoResult>> Profile(ProfileInfoCommand request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

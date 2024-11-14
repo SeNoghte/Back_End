@@ -12,6 +12,7 @@ public class ApplicationDBContext : DbContext
     public DbSet<PendingVerification> PendingVerifications { get; set; }
     public DbSet<Group> Groups { get; set; }
     public DbSet<UserGroup> UserGroups { get; set; }
+    public DbSet<Message> Messages { get; set; }
 
     public ApplicationDBContext(IConfiguration configuration)
     {

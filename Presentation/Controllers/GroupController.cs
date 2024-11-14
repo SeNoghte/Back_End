@@ -29,6 +29,16 @@ namespace Presentation.Controllers
         public async Task<ActionResult<GroupDeleteResult>> Delete([FromBody] GroupDeleteCommand request)
         {
             return await mediator.Send(request);
+        }
+        [HttpPost(nameof(GetGroupMessageList))]
+        public async Task<ActionResult<GetGroupMessageListResult>> GetGroupMessageList([FromBody] GetGroupMessageListQuery request)
+        {
+            return await mediator.Send(request);
+        }   
+        [HttpPost(nameof(SendMessageToGroup))]
+        public async Task<ActionResult<SendMessageToGroupResult>> SendMessageToGroup([FromBody] SendMessageToGroup request)
+        {
+            return await mediator.Send(request);
         }    
     }
 }

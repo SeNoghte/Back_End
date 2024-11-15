@@ -80,10 +80,20 @@ namespace Application.Groups
                 OwnerId = (Guid)UserId
             };
 
-            await dBContext.AddAsync(gp);
+            await dBContext.AddAsync(gp);       
             await dBContext.SaveChangesAsync();
 
             gp = await dBContext.Groups.FirstOrDefaultAsync(gp => gp.Name == request.Name);
+
+            var userGroup = new UserGroup
+            {
+                UserId = (Guid)UserId,
+                GroupId = gp.Id,
+                JoinedDate = DateTime.UtcNow
+            };
+
+            await dBContext.UserGroups.AddAsync(userGroup);
+            await dBContext.SaveChangesAsync();
 
             result.GroupId = gp.Id.ToString();
             result.Success = true;

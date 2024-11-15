@@ -1,11 +1,13 @@
 ﻿using Application.Common.Models;
 using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
+using Application.DTO;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace Application.Groups
@@ -17,7 +19,7 @@ namespace Application.Groups
 
     public class GroupSearchResult : ResultModel
     {
-        public List<Group> FilteredGroups { get; set; }
+        public List<GroupDto> FilteredGroups { get; set; }
     }
 
     public class GroupSearchHandler : IRequestHandler<GroupSearchCommand, GroupSearchResult>
@@ -55,18 +57,41 @@ namespace Application.Groups
                 return result;
             }
 
-            if (request.Filter == null)
+            var groupsQuery = dBContext.Groups
+                .Include(g => g.Members)              
+                .ThenInclude(ug => ug.User)            
+                .OrderBy(g => g.Name);
+
+            if (request.Filter != null)
             {
-                result.FilteredGroups = await dBContext.Groups.OrderBy(gp => gp.Name).ToListAsync();
+                groupsQuery = groupsQuery.Where(g => g.Name.Contains(request.Filter)).OrderBy(gp => gp.Name);
             }
 
-            else
+            var groups = await groupsQuery.ToListAsync();
+
+            result.FilteredGroups = groups.Select(g => new GroupDto
             {
-                result.FilteredGroups = await dBContext.Groups
-                    .Where(gp => gp.Name.Contains(request.Filter))
-                    .OrderBy(gp => gp.Name)
-                    .ToListAsync();
-            }
+                Id = g.Id,
+                Name = g.Name,
+                Description = g.Description,
+                CreatedDate = g.CreatedDate,
+                Owner = new UserDto
+                {
+                    UserId = g.OwnerId,
+                    Name = g.Owner.Name,
+                    Username = g.Owner.Username,
+                    Email = g.Owner.Email,
+                    JoinedDate = g.Owner.JoinedDate,
+                },
+                Members = g.Members.Select(m => new UserDto
+                {
+                    UserId = g.OwnerId,
+                    Name = m.User.Name,
+                    Username = m.User.Username,
+                    Email = m.User.Email,
+                    JoinedDate = m.User.JoinedDate,
+                }).ToList()
+            }).ToList();
 
             result.Success = true;
             return result;

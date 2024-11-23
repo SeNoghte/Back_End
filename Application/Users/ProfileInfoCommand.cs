@@ -1,5 +1,7 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.CloudService;
 using Application.Common.Services.IdentityService;
+using Application.DTO;
 using Application.Groups;
 using DataAccess;
 using MediatR;
@@ -19,52 +21,64 @@ namespace Application.Users
 
     public class ProfileInfoResult : ResultModel
     {
-        public string Name { get; set; }
-        public string? Username { get; set; }
-        public string Email { get; set; }
-        public DateTime JoinedDate { get; set; }
+        public UserDto User { get; set; }
     }
 
     public class ProfileInfoHandler : IRequestHandler<ProfileInfoCommand, ProfileInfoResult>
     {
         private readonly IIdentityService identityService;
         private readonly ApplicationDBContext dBContext;
+        private readonly ICloudService cloudService;
 
-        public ProfileInfoHandler(IIdentityService identityService, ApplicationDBContext dBContext)
+        public ProfileInfoHandler(IIdentityService identityService, ApplicationDBContext dBContext, ICloudService cloudService)
         {
             this.identityService = identityService;
             this.dBContext = dBContext;
+            this.cloudService = cloudService;
         }
 
         public async Task<ProfileInfoResult> Handle(ProfileInfoCommand request, CancellationToken cancellationToken)
         {
             var result = new ProfileInfoResult();
 
-            var UserId = identityService.GetCurrentUserId();
-
-            if (UserId == null)
+            try
             {
-                result.ErrorCode = 401;
-                result.Message = "Unauthorized";
+                var UserId = identityService.GetCurrentUserId();
+
+                if (UserId == null)
+                {
+                    result.ErrorCode = 401;
+                    result.Message = "Unauthorized";
+                    return result;
+                }
+
+                var user = await dBContext.Users.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    result.Message = "کاربر پیدا نشد";
+                    result.ErrorCode = 404;
+                    return result;
+                }
+                result.User = new UserDto()
+                {
+                    UserId = user.UserId,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Username = user.Username,
+                    JoinedDate = user.JoinedDate,
+                    Image = await cloudService.GetImagePath(user.Image)
+                };
+                result.Success = true;
+
                 return result;
             }
-
-            var user = await dBContext.Users.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
-            
-            if(user == null)
+            catch
             {
-                result.Message = "کاربر پیدا نشد";
-                result.ErrorCode = 404;
+                result.Message = "مشکلی پیش آمده است";
+                result.ErrorCode = 500;
                 return result;
             }
-
-            result.Name = user.Name;
-            result.Email = user.Email;
-            result.Username = user.Username;
-            result.JoinedDate = user.JoinedDate;
-            result.Success = true;
-
-            return result;
         }
     }
 }

@@ -13,5 +13,6 @@ namespace Application.DTO
         public string? Username { get; set; }
         public string Email { get; set; }
         public DateTime JoinedDate { get; set; }
+        public string? Image { get; set; }
     }
 }

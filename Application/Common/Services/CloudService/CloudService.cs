@@ -33,6 +33,9 @@ namespace Application.Common.Services.CloudService
 
         public async Task<string> GetImagePath(string identifier)
         {
+            if (string.IsNullOrEmpty(identifier))
+                return null;
+
             ListObjectsV2Request r = new ListObjectsV2Request
             {
                 BucketName = bucketName
@@ -49,7 +52,7 @@ namespace Application.Common.Services.CloudService
             ListObjectsV2Response response = await client.ListObjectsV2Async(r);
 
             string res;
-            var obj = response.S3Objects.Where(o => o.Key == identifier).FirstOrDefault();
+            var obj = response.S3Objects.Where(o => o.Key.Contains(identifier)).FirstOrDefault();
 
             if(obj != null)
             {
@@ -69,31 +72,38 @@ namespace Application.Common.Services.CloudService
             }
         }
 
-        public async Task<bool> SetImage(string identifier, IFormFile image)
+        public async Task<string> SetImage(IFormFile image, string imageType)
         {
-
-            var credentials = new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey);
-            var config = new AmazonS3Config
+            try
             {
-                ServiceURL = endPoint,
-                ForcePathStyle = true
-            };
+                var credentials = new Amazon.Runtime.BasicAWSCredentials(accessKey, secretKey);
+                var config = new AmazonS3Config
+                {
+                    ServiceURL = endPoint,
+                    ForcePathStyle = true
+                };
 
-            using var client = new AmazonS3Client(credentials, config);
-            using var memoryStream = new MemoryStream();
-     
-            await image.CopyToAsync(memoryStream);
-            using var fileTransferUtility = new TransferUtility(client);
-            
-            string newFileName = $"{identifier}-{image.FileName}";
-            var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+                using var client = new AmazonS3Client(credentials, config);
+                using var memoryStream = new MemoryStream();
+
+                await image.CopyToAsync(memoryStream);
+                using var fileTransferUtility = new TransferUtility(client);
+
+                string newFileName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                string objectKey = $"{imageType}/{newFileName}";
+                var fileTransferUtilityRequest = new TransferUtilityUploadRequest
+                {
+                    BucketName = bucketName,
+                    InputStream = memoryStream,
+                    Key = objectKey
+                };
+                await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
+                return objectKey;
+            }
+            catch
             {
-                BucketName = bucketName,
-                InputStream = memoryStream,
-                Key = newFileName
-            };
-            await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
-            return true;
+                return null;
+            }
             
         }
     }

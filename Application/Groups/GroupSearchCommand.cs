@@ -1,4 +1,5 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.CloudService;
 using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
 using Application.DTO;
@@ -26,14 +27,17 @@ namespace Application.Groups
     {
         private readonly ApplicationDBContext dBContext;
         private readonly IGeneralServices generalServices;
+        private readonly ICloudService cloudService;
+
         IIdentityService identityService {  get; set; }
 
         public GroupSearchHandler(ApplicationDBContext dBContext, IGeneralServices generalServices,
-            IIdentityService identityService)
+            IIdentityService identityService, ICloudService cloudService)
         {
             this.dBContext = dBContext;
             this.generalServices = generalServices;
             this.identityService = identityService;
+            this.cloudService = cloudService;
         }
 
         public async Task<GroupSearchResult> Handle(GroupSearchCommand request, CancellationToken cancellationToken)
@@ -75,6 +79,7 @@ namespace Application.Groups
                 Name = g.Name,
                 Description = g.Description,
                 CreatedDate = g.CreatedDate,
+                Image = cloudService.GetImagePath(g.Image).GetAwaiter().GetResult(),
                 Owner = new UserDto
                 {
                     UserId = g.OwnerId,

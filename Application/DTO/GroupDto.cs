@@ -15,5 +15,6 @@ namespace Application.DTO
         public DateTime CreatedDate { get; set; }
         public UserDto Owner { get; set; }
         public List<UserDto> Members { get; set; }
+        public string Image { get; set; }
     }
 }

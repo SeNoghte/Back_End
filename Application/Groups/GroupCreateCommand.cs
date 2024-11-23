@@ -1,8 +1,10 @@
 ﻿using Application.Common.Models;
+using Application.Common.Services.CloudService;
 using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -17,7 +19,8 @@ namespace Application.Groups
     public class GroupCreateCommand : IRequest<GroupCreateResult>
     {
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
+        public string? ImageId { get; set; }
     }
 
     public class GroupCreateResult : ResultModel
@@ -28,12 +31,16 @@ namespace Application.Groups
     public class GroupCreateHandler : IRequestHandler<GroupCreateCommand, GroupCreateResult>
     {
         private readonly ApplicationDBContext dBContext;
+        private readonly ICloudService cloudService;
+
         IIdentityService identityService {  get; set; }
 
-        public GroupCreateHandler(ApplicationDBContext dBContext, IIdentityService identityService)
+        public GroupCreateHandler(ApplicationDBContext dBContext, IIdentityService identityService,
+            ICloudService cloudService)
         {
             this.dBContext = dBContext;
             this.identityService = identityService;
+            this.cloudService = cloudService;
         }
 
         public async Task<GroupCreateResult> Handle(GroupCreateCommand request, CancellationToken cancellationToken)
@@ -58,13 +65,13 @@ namespace Application.Groups
                 return result;
             }
 
-            if(request.Name.Length < 3)
+            if (request.Name.Length < 3)
             {
                 result.Message = "نام گروه حداقل شامل 2 حرف باشد";
                 return result;
             }
 
-            var groupExist = await dBContext.Groups.AnyAsync(gp => gp.Name ==  request.Name);
+            var groupExist = await dBContext.Groups.AnyAsync(gp => gp.Name == request.Name);
 
             if (groupExist)
             {
@@ -72,15 +79,17 @@ namespace Application.Groups
                 return result;
             }
 
+
             var gp = new Group
             {
                 Name = request.Name,
                 Description = request.Description,
                 CreatedDate = DateTime.UtcNow,
-                OwnerId = (Guid)UserId
+                OwnerId = (Guid)UserId,
+                Image = request.ImageId,
             };
 
-            await dBContext.AddAsync(gp);       
+            await dBContext.AddAsync(gp);
             await dBContext.SaveChangesAsync();
 
             gp = await dBContext.Groups.FirstOrDefaultAsync(gp => gp.Name == request.Name);

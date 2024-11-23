@@ -1,4 +1,5 @@
 using Application.Common.Services.CleanupService;
+using Application.Common.Services.CloudService;
 using Application.Common.Services.EmailService;
 using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
@@ -23,6 +24,7 @@ public static class ServiceExtensions
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IGeneralServices, GeneralServices>();
+        services.AddScoped<ICloudService, CloudService>();
 
         services.AddHostedService<CleanupService>();
         services.AddHttpContextAccessor();

@@ -44,5 +44,10 @@ namespace Application.Common.Services.GeneralServices
         {
             return await dBContext.Groups.Where(gp => gp.Id == groupId).FirstOrDefaultAsync();
         }
+
+        public async Task<User> GetUser(Guid userId)
+        {
+            return await dBContext.Users.Where(u => u.UserId == userId).FirstOrDefaultAsync();
+        }
     }
 }

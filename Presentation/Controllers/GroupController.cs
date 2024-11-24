@@ -39,6 +39,12 @@ namespace Presentation.Controllers
         public async Task<ActionResult<SendMessageToGroupResult>> SendMessageToGroup([FromBody] SendMessageToGroup request)
         {
             return await mediator.Send(request);
-        }    
+        }
+
+        [HttpPost(nameof(AddMember))]
+        public async Task<ActionResult<AddMemberResult>> AddMember([FromBody] AddMemberCommand request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

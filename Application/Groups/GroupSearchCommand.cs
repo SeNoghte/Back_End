@@ -104,7 +104,7 @@ namespace Application.Groups
                 result.Success = true;
                 return result;
             }
-            catch
+            catch(Exception ex)
             {
                 result.Message = "مشکلی پیش آمده است";
                 result.ErrorCode = 500;

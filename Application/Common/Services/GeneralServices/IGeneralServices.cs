@@ -9,5 +9,6 @@ namespace Application.Common.Services.GeneralServices
         public bool CheckUsernameFormat(string username);
         public Task<bool> CheckUserExists(Guid userId);
         public Task<Group> GetGroup(Guid groupId);
+        public Task<User> GetUser(Guid userId);
     }
 }

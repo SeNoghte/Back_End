@@ -51,83 +51,91 @@ namespace Application.Groups
         {
 
             var result = new GroupCreateResult();
-
-            var UserId = identityService.GetCurrentUserId();
-
-            if (UserId == null)
+            try
             {
-                result.ErrorCode = 401;
-                result.Message = "Unauthorized";
-                return result;
-            }
+                var UserId = identityService.GetCurrentUserId();
 
-            var ownerExist = await generalServices.CheckUserExists((Guid)UserId);
-
-            if (!ownerExist)
-            {
-                result.Message = "کاربر پیدا نشد";
-                return result;
-            }
-
-            if (request.Name.Length < 3)
-            {
-                result.Message = "نام گروه حداقل شامل 2 حرف باشد";
-                return result;
-            }
-
-            var groupExist = await dBContext.Groups.AnyAsync(gp => gp.Name == request.Name);
-
-            if (groupExist)
-            {
-                result.Message = " نام گروه در سایت ثبت شده است";
-                return result;
-            }
-
-
-            var gp = new Group
-            {
-                Name = request.Name,
-                Description = request.Description,
-                CreatedDate = DateTime.UtcNow,
-                OwnerId = (Guid)UserId,
-                Image = request.ImageId,
-            };
-
-            await dBContext.AddAsync(gp);
-            await dBContext.SaveChangesAsync();
-
-            gp = await dBContext.Groups.FirstOrDefaultAsync(gp => gp.Name == request.Name);
-
-            //owner
-            var userGroup = new UserGroup
-            {
-                UserId = (Guid)UserId,
-                GroupId = gp.Id,
-                JoinedDate = DateTime.UtcNow
-            };
-
-            await dBContext.UserGroups.AddAsync(userGroup);
-
-            foreach (var userId in request.MembersToAdd)
-            {
-                var usrExist = await generalServices.CheckUserExists(Guid.Parse(userId));
-                if (usrExist)
+                if (UserId == null)
                 {
-                    var memberGroup = new UserGroup
-                    {
-                        UserId = Guid.Parse(userId),
-                        GroupId = gp.Id,
-                        JoinedDate = DateTime.UtcNow
-                    };
-                    await dBContext.UserGroups.AddAsync(memberGroup);
+                    result.ErrorCode = 401;
+                    result.Message = "Unauthorized";
+                    return result;
                 }
+
+                var ownerExist = await generalServices.CheckUserExists((Guid)UserId);
+
+                if (!ownerExist)
+                {
+                    result.Message = "کاربر پیدا نشد";
+                    return result;
+                }
+
+                if (request.Name.Length < 3)
+                {
+                    result.Message = "نام گروه حداقل شامل 2 حرف باشد";
+                    return result;
+                }
+
+                var groupExist = await dBContext.Groups.AnyAsync(gp => gp.Name == request.Name);
+
+                if (groupExist)
+                {
+                    result.Message = " نام گروه در سایت ثبت شده است";
+                    return result;
+                }
+
+
+                var gp = new Group
+                {
+                    Name = request.Name,
+                    Description = request.Description,
+                    CreatedDate = DateTime.UtcNow,
+                    OwnerId = (Guid)UserId,
+                    Image = request.ImageId,
+                };
+
+                await dBContext.AddAsync(gp);
+                await dBContext.SaveChangesAsync();
+
+                gp = await dBContext.Groups.FirstOrDefaultAsync(gp => gp.Name == request.Name);
+
+                //owner
+                var userGroup = new UserGroup
+                {
+                    UserId = (Guid)UserId,
+                    GroupId = gp.Id,
+                    JoinedDate = DateTime.UtcNow
+                };
+
+                await dBContext.UserGroups.AddAsync(userGroup);
+
+                foreach (var userId in request.MembersToAdd.Distinct())
+                {
+                    var usrExist = await generalServices.CheckUserExists(Guid.Parse(userId));
+                    if (usrExist)
+                    {
+                        var memberGroup = new UserGroup
+                        {
+                            UserId = Guid.Parse(userId),
+                            GroupId = gp.Id,
+                            JoinedDate = DateTime.UtcNow
+                        };
+                        await dBContext.UserGroups.AddAsync(memberGroup);
+                    }
+                }
+
+                await dBContext.SaveChangesAsync();
+
+                result.GroupId = gp.Id.ToString();
+                result.Success = true;
+                return result;
             }
-
-            await dBContext.SaveChangesAsync();
-
-            result.GroupId = gp.Id.ToString();
-            result.Success = true;
-            return result;
+            catch
+            {
+                result.Message = "مشکلی پیش آمده است";
+                result.ErrorCode = 500;
+                return result;
+            }
         }
     }
 }

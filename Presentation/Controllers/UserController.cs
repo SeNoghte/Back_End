@@ -47,7 +47,13 @@ namespace Presentation.Controllers
         }
 
         [HttpPost(nameof(Profile))]
-        public async Task<ActionResult<ProfileInfoResult>> Profile(ProfileInfoCommand request)
+        public async Task<ActionResult<ProfileInfoResult>> Profile([FromBody] ProfileInfoCommand request)
+        {
+            return await mediator.Send(request);
+        }
+
+        [HttpPost(nameof(GetUsers))]
+        public async Task<ActionResult<UserSearchResult>> GetUsers([FromBody] UserSearchCommand request)
         {
             return await mediator.Send(request);
         }

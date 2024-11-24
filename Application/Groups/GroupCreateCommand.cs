@@ -1,5 +1,6 @@
 ﻿using Application.Common.Models;
 using Application.Common.Services.CloudService;
+using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
@@ -21,6 +22,7 @@ namespace Application.Groups
         public string Name { get; set; }
         public string? Description { get; set; }
         public string? ImageId { get; set; }
+        public List<string>? MembersToAdd { get; set; }
     }
 
     public class GroupCreateResult : ResultModel
@@ -32,15 +34,17 @@ namespace Application.Groups
     {
         private readonly ApplicationDBContext dBContext;
         private readonly ICloudService cloudService;
+        private readonly IGeneralServices generalServices;
 
         IIdentityService identityService {  get; set; }
 
         public GroupCreateHandler(ApplicationDBContext dBContext, IIdentityService identityService,
-            ICloudService cloudService)
+            ICloudService cloudService, IGeneralServices generalServices)
         {
             this.dBContext = dBContext;
             this.identityService = identityService;
             this.cloudService = cloudService;
+            this.generalServices = generalServices;
         }
 
         public async Task<GroupCreateResult> Handle(GroupCreateCommand request, CancellationToken cancellationToken)
@@ -57,7 +61,7 @@ namespace Application.Groups
                 return result;
             }
 
-            var ownerExist = await dBContext.Users.AnyAsync(u => u.UserId == UserId);
+            var ownerExist = await generalServices.CheckUserExists((Guid)UserId);
 
             if (!ownerExist)
             {
@@ -94,6 +98,7 @@ namespace Application.Groups
 
             gp = await dBContext.Groups.FirstOrDefaultAsync(gp => gp.Name == request.Name);
 
+            //owner
             var userGroup = new UserGroup
             {
                 UserId = (Guid)UserId,
@@ -102,6 +107,22 @@ namespace Application.Groups
             };
 
             await dBContext.UserGroups.AddAsync(userGroup);
+
+            foreach (var userId in request.MembersToAdd)
+            {
+                var usrExist = await generalServices.CheckUserExists(Guid.Parse(userId));
+                if (usrExist)
+                {
+                    var memberGroup = new UserGroup
+                    {
+                        UserId = Guid.Parse(userId),
+                        GroupId = gp.Id,
+                        JoinedDate = DateTime.UtcNow
+                    };
+                    await dBContext.UserGroups.AddAsync(memberGroup);
+                }
+            }
+
             await dBContext.SaveChangesAsync();
 
             result.GroupId = gp.Id.ToString();

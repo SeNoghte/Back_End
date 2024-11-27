@@ -17,6 +17,8 @@ namespace Application.Users
     public class UserSearchCommand : IRequest<UserSearchResult>
     {
         public string Filter { get; set; }
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
     public class UserSearchResult : ResultModel
@@ -65,6 +67,10 @@ namespace Application.Users
                         .OrderBy(u => u.Username);
                 }
 
+                usersQuery
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize);
+
                 var users = await usersQuery.ToListAsync();
 
                 result.FilteredUsers = users.Select(u => new UserDto
@@ -74,7 +80,7 @@ namespace Application.Users
                     Name = u.Name,
                     Email = u.Email,
                     JoinedDate = u.JoinedDate,
-                    Image = cloudService.GetImagePath(u.Image).GetAwaiter().GetResult()
+                    Image = u.Image
                 }).ToList();
 
                 result.Success = true;

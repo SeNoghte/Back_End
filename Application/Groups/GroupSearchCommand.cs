@@ -4,18 +4,16 @@ using Application.Common.Services.GeneralServices;
 using Application.Common.Services.IdentityService;
 using Application.DTO;
 using DataAccess;
-using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
-using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
 namespace Application.Groups
 {
     public class GroupSearchCommand : IRequest<GroupSearchResult>
     {
         public string Filter { get; set; }
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
     public class GroupSearchResult : ResultModel
@@ -29,7 +27,7 @@ namespace Application.Groups
         private readonly IGeneralServices generalServices;
         private readonly ICloudService cloudService;
 
-        IIdentityService identityService {  get; set; }
+        IIdentityService identityService { get; set; }
 
         public GroupSearchHandler(ApplicationDBContext dBContext, IGeneralServices generalServices,
             IIdentityService identityService, ICloudService cloudService)
@@ -70,41 +68,58 @@ namespace Application.Groups
 
                 if (request.Filter != null)
                 {
-                    groupsQuery = groupsQuery.Where(g => g.Name.Contains(request.Filter)).OrderBy(gp => gp.Name);
+                    groupsQuery = groupsQuery
+                        .Where(g => g.Name.Contains(request.Filter))
+                        .OrderBy(gp => gp.Name);
                 }
 
+                groupsQuery = groupsQuery
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .OrderBy(gp => gp.Name);
+
                 var groups = await groupsQuery.ToListAsync();
+
 
                 result.FilteredGroups = groups.Select(g => new GroupDto
                 {
                     Id = g.Id,
                     Name = g.Name,
                     Description = g.Description,
-                    CreatedDate = g.CreatedDate,
-                    Image = cloudService.GetImagePath(g.Image).GetAwaiter().GetResult(),
-                    Owner = new UserDto
-                    {
-                        UserId = g.OwnerId,
-                        Name = g.Owner.Name,
-                        Username = g.Owner.Username,
-                        Email = g.Owner.Email,
-                        JoinedDate = g.Owner.JoinedDate,
-                    },
-                    Members = g.Members.Select(m => new UserDto
-                    {
-                        UserId = g.OwnerId,
-                        Name = m.User.Name,
-                        Username = m.User.Username,
-                        Email = m.User.Email,
-                        JoinedDate = m.User.JoinedDate,
-                        Image = cloudService.GetImagePath(m.User.Image).GetAwaiter().GetResult(),
-                    }).ToList()
+                    Image = g.Image
                 }).ToList();
+
+
+                //result.FilteredGroups = groups.Select(g => new GroupDto
+                //{
+                //    Id = g.Id,
+                //    Name = g.Name,
+                //    Description = g.Description,
+                //    CreatedDate = g.CreatedDate,
+                //    Image = g.Image,
+                //    Owner = new UserDto
+                //    {
+                //        UserId = g.OwnerId,
+                //        Name = g.Owner.Name,
+                //        Username = g.Owner.Username,
+                //        Email = g.Owner.Email,
+                //        JoinedDate = g.Owner.JoinedDate,
+                //    },
+                //    Members = g.Members.Select(m => new UserDto
+                //    {
+                //        UserId = g.OwnerId,
+                //        Name = m.User.Name,
+                //        Username = m.User.Username,
+                //        Email = m.User.Email,
+                //        JoinedDate = m.User.JoinedDate,
+                //        Image = m.User.Image,
+                //    }).ToList()
+                //}).ToList();
 
                 result.Success = true;
                 return result;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result.Message = "مشکلی پیش آمده است";
                 result.ErrorCode = 500;

@@ -13,4 +13,7 @@ public class User
 
     public ICollection<UserGroup> Groups { get; set; }
     public ICollection<Group> OwnedGroups { get; set; }
+    public ICollection<UserEvent> Events { get; set; }
+    public ICollection<Event> EventsOwned { get; set; }
+
 }

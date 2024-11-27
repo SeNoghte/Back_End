@@ -14,13 +14,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-builder.WebHost.ConfigureKestrel(options =>
-{
-    options.Listen(IPAddress.Any, 6001, listenOptions =>
-    {
-        listenOptions.UseHttps("./certificate.pfx", "1234");
-    });
-});
+//builder.WebHost.ConfigureKestrel(options =>
+//{
+//    options.Listen(IPAddress.Any, 6001, listenOptions =>
+//    {
+//        listenOptions.UseHttps("./certificate.pfx", "1234");
+//    });
+//});
 
 builder.Services.AddSwaggerGen(c =>
 {

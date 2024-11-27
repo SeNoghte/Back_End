@@ -43,7 +43,30 @@ public class ApplicationDBContext : DbContext
             .HasOne(g => g.Owner)
             .WithMany(u => u.OwnedGroups)
             .HasForeignKey(g => g.OwnerId)
+            .OnDelete(DeleteBehavior.Restrict); 
+
+        modelBuilder.Entity<Event>()
+            .HasOne(e => e.Group)
+            .WithMany(g => g.Events)
+            .HasForeignKey(e => e.GroupId);
+
+        modelBuilder.Entity<Event>()
+            .HasOne(e => e.Owner)
+            .WithMany(u => u.EventsOwned)
+            .HasForeignKey(e => e.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<UserEvent>()
+            .HasKey(ue => new { ue.UserId, ue.EventId });
+
+        modelBuilder.Entity<UserEvent>()
+            .HasOne(ue => ue.User)
+            .WithMany(u => u.Events)
+            .HasForeignKey(ue => ue.UserId);
+
+        modelBuilder.Entity<UserEvent>()
+            .HasOne(ue => ue.Event)
+            .WithMany(e => e.EventMembers)
+            .HasForeignKey(ue => ue.EventId);
     }
 }

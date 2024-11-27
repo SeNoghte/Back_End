@@ -12,6 +12,8 @@
         public Guid OwnerId { get; set; }
         public User Owner { get; set; }
 
-        
+
+        public ICollection<Event> Events { get; set; }
+
     }
 }

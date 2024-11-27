@@ -55,8 +55,6 @@ namespace Application.Events
 
                 var e = await dBContext.Events
                     .Where(ev => ev.Id == request.EventId)
-                    .Include(ev => ev.Group)         
-                    .Include(ev => ev.Owner)        
                     .Include(ev => ev.EventMembers)      
                     .ThenInclude(ue => ue.User)       
                     .FirstOrDefaultAsync();

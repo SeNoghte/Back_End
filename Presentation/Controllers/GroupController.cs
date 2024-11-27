@@ -52,5 +52,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(GetGroup))]
+        public async Task<ActionResult<GetGroupResult>> GetGroup([FromBody] GetGroupQuery request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

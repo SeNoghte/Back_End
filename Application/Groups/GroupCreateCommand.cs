@@ -21,7 +21,7 @@ namespace Application.Groups
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string? ImageId { get; set; }
+        public string? ImageUrl { get; set; }
         public List<Guid>? MembersToAdd { get; set; }
     }
 
@@ -91,7 +91,7 @@ namespace Application.Groups
                     Description = request.Description,
                     CreatedDate = DateTime.UtcNow,
                     OwnerId = (Guid)UserId,
-                    Image = request.ImageId,
+                    Image = request.ImageUrl,
                 };
 
                 await dBContext.AddAsync(gp);

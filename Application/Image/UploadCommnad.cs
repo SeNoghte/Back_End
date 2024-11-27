@@ -34,15 +34,19 @@ namespace Application.Image
         {
             var result = new UploadResult();
 
-            if(request.Type.ToLower().Contains("group"))
-            { 
+            if (request.Type.ToLower().Contains("group"))
+            {
                 request.Type = "groups";
             }
             else if (request.Type.ToLower().Contains("user"))
             {
                 request.Type = "users";
             }
-            else
+            else if (request.Type.ToLower().Contains("event"))
+            {
+                request.Type = "event";
+            }
+            else 
             {
                 request.Type = "other";
             }

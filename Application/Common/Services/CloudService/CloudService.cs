@@ -98,7 +98,8 @@ namespace Application.Common.Services.CloudService
                     Key = objectKey
                 };
                 await fileTransferUtility.UploadAsync(fileTransferUtilityRequest);
-                return objectKey;
+                string fileUrl = await GetImagePath(objectKey);
+                return fileUrl;    
             }
             catch
             {

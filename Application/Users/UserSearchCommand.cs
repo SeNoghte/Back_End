@@ -74,7 +74,7 @@ namespace Application.Users
                     Name = u.Name,
                     Email = u.Email,
                     JoinedDate = u.JoinedDate,
-                    Image = cloudService.GetImagePath(u.Image).GetAwaiter().GetResult()
+                    Image = u.Image
                 }).ToList();
 
                 result.Success = true;

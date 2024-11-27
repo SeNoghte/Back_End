@@ -81,7 +81,7 @@ namespace Application.Groups
                     Name = g.Name,
                     Description = g.Description,
                     CreatedDate = g.CreatedDate,
-                    Image = cloudService.GetImagePath(g.Image).GetAwaiter().GetResult(),
+                    Image = g.Image,
                     Owner = new UserDto
                     {
                         UserId = g.OwnerId,
@@ -97,7 +97,7 @@ namespace Application.Groups
                         Username = m.User.Username,
                         Email = m.User.Email,
                         JoinedDate = m.User.JoinedDate,
-                        Image = cloudService.GetImagePath(m.User.Image).GetAwaiter().GetResult(),
+                        Image = m.User.Image,
                     }).ToList()
                 }).ToList();
 

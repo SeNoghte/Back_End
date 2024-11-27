@@ -5,6 +5,7 @@ using Application.Common.Services.IdentityService;
 using DataAccess;
 using Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Events
 {
@@ -67,8 +68,18 @@ namespace Application.Events
 
                 if (targetGroup == null)
                 {
-                    result.ErrorCode = 401;
+                    result.ErrorCode = 404;
                     result.Message = "گروه پیدا نشد";
+                    return result;
+                }
+
+                var memberOfGroup = await dBContext.UserGroups.Where(ug => ug.GroupId == request.GroupId &&
+                                                     ug.UserId == currentUser.UserId).FirstOrDefaultAsync();
+
+                if (memberOfGroup  == null)
+                {
+                    result.ErrorCode = 401;
+                    result.Message = "کاربر عضو گروه نیست";
                     return result;
                 }
 

@@ -17,6 +17,8 @@ namespace Application.Users
     public class UserSearchCommand : IRequest<UserSearchResult>
     {
         public string Filter { get; set; }
+        public int PageIndex { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
     }
 
     public class UserSearchResult : ResultModel
@@ -64,6 +66,10 @@ namespace Application.Users
                         .Where(u => u.Username.Contains(request.Filter))
                         .OrderBy(u => u.Username);
                 }
+
+                usersQuery
+                    .Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize);
 
                 var users = await usersQuery.ToListAsync();
 

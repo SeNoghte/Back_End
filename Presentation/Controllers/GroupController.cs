@@ -46,5 +46,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(Join))]
+        public async Task<ActionResult<JoinGroupResult>> Join([FromBody] JoinGroupCommand request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

@@ -1,7 +1,7 @@
 using Application.Common.Models;
 using MediatR;
 
-namespace Application.Event;
+namespace Application.Events;
 
 public class SaveEventCommand : IRequest<SaveEventResult>
 {

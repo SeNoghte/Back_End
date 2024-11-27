@@ -1,4 +1,4 @@
-using Application.Event;
+using Application.Events;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +13,12 @@ public class EventController : BaseController
 
     [HttpPost(nameof(SaveEvent))]
     public async Task<ActionResult<SaveEventResult>> SaveEvent([FromBody] SaveEventCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
+    [HttpPost(nameof(Create))]
+    public async Task<ActionResult<CreateEventResult>> Create([FromBody] CreateEventCommand request)
     {
         return await mediator.Send(request);
     }

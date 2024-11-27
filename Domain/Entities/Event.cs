@@ -8,10 +8,9 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public DateTime CreatedDate { get; set; }
-
+        public string ImagePath { get; set; }
         public Guid GroupId { get; set; }
         public Group Group { get; set; }
-
         public Guid OwnerId { get; set; }
         public User Owner { get; set; }
 

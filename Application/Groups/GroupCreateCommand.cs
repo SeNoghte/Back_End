@@ -22,7 +22,7 @@ namespace Application.Groups
         public string Name { get; set; }
         public string? Description { get; set; }
         public string? ImageId { get; set; }
-        public List<string>? MembersToAdd { get; set; }
+        public List<Guid>? MembersToAdd { get; set; }
     }
 
     public class GroupCreateResult : ResultModel
@@ -111,12 +111,12 @@ namespace Application.Groups
 
                 foreach (var userId in request.MembersToAdd.Distinct())
                 {
-                    var usrExist = await generalServices.CheckUserExists(Guid.Parse(userId));
+                    var usrExist = await generalServices.CheckUserExists(userId);
                     if (usrExist)
                     {
                         var memberGroup = new UserGroup
                         {
-                            UserId = Guid.Parse(userId),
+                            UserId = userId,
                             GroupId = gp.Id,
                             JoinedDate = DateTime.UtcNow
                         };

@@ -57,5 +57,12 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+
+        [HttpPost(nameof(EditProfile))]
+        public async Task<ActionResult<EditProfileResult>> EditProfile([FromBody] EditProfileCommand request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

@@ -86,7 +86,7 @@ public class SignUpHandler : IRequestHandler<SignUpCommand, SignUpResult>
 
         if (request.Name.Length < 2)
         {
-            result.Message = "نام حداقل شامل 2 حرف باشد";
+            result.Message = "نام حداقل شامل 3 حرف باشد";
             return result;
         }
 

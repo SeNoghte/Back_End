@@ -60,7 +60,7 @@ namespace Application.Common.Services.CloudService
                 {
                     BucketName = bucketName,
                     Key = obj.Key,
-                    Expires = DateTime.Now.AddHours(1)
+                    Expires = DateTime.Now.AddYears(100)
                 };
 
                 res = client.GetPreSignedURL(urlRequest);

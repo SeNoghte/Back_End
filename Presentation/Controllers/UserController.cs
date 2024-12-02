@@ -57,5 +57,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(ForgotPassword))]
+        public async Task<ActionResult<ForgetPasswordResult>> ForgotPassword([FromBody] ForgetPasswordCommand requset)
+        {
+            return await mediator.Send(requset);
+        }
     }
 }

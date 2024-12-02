@@ -11,6 +11,7 @@ namespace Application.Users
     public class SendVerificationCodeCommand : IRequest<SendVerificationCodeResult>
     {
         public string Email { get; set; }
+        public bool IsForPasswordRecovery { get; set; } = false;
     }
 
     public class SendVerificationCodeResult : ResultModel
@@ -36,14 +37,6 @@ namespace Application.Users
         {
             var result = new SendVerificationCodeResult();
 
-            var uExists = _dbContext.Users.Any(u => u.Email == request.Email);
-
-            if (uExists)
-            {
-                result.Message = "این ایمیل در سایت ثبت نام شده است";
-                return result;
-            }
-
             var isValidEmail = generalServices.CheckEmailFromat(request.Email);
 
             if (!isValidEmail)
@@ -51,6 +44,26 @@ namespace Application.Users
                 result.Message = "فرمت ایمیل اشتباه است";
                 return result;
             }
+            
+            var uExists = _dbContext.Users.Any(u => u.Email == request.Email);
+            
+            if (uExists)
+            {
+                if (!request.IsForPasswordRecovery)
+                {
+                    result.Message = "این ایمیل در سایت ثبت نام شده است";
+                    return result;
+                }
+            }
+            else
+            {
+                if(request.IsForPasswordRecovery)
+                {
+                    result.Message = "این ایمیل در سایت ثبت نام نشده است";
+                    return result;
+                }
+            }
+            
 
             Random rnd = new Random();
             string code = "12345";

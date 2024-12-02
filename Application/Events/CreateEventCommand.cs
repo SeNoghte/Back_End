@@ -14,7 +14,7 @@ namespace Application.Events
         public string Title { get; set; }
         public string? Description { get; set; }
         public DateOnly Date { get; set; }
-        public TimeOnly Time { get; set; }
+        public string? Time { get; set; }
         public Guid GroupId { get; set; }
         public string ImagePath { get; set; }
     }
@@ -83,12 +83,23 @@ namespace Application.Events
                     return result;
                 }
 
-                DateTime dateTime = new DateTime(request.Date, request.Time, DateTimeKind.Utc);
+                DateTime dateTime;       
 
-                if (dateTime < DateTime.UtcNow) 
+                if (string.IsNullOrEmpty(request.Time ))
+                {                 
+                     dateTime = new DateTime(request.Date, TimeOnly.MinValue, DateTimeKind.Utc);
+                }
+                else
+                {
+                     dateTime = new DateTime(request.Date, TimeOnly.Parse(request.Time), DateTimeKind.Utc);
+                }
+
+
+
+                if(new DateTime(request.Date, TimeOnly.MaxValue) < DateTime.UtcNow)
                 {
                     result.ErrorCode = 401;
-                    result.Message = "تاریخ یا ساعت نامعتبر";
+                    result.Message = "تاریخ نامعتبر";
                     return result;
                 }
 

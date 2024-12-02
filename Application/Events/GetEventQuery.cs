@@ -23,6 +23,7 @@ namespace Application.Events
     public class GetEventResult : ResultModel
     {
         public EventDto Event { get; set; }
+        public List<EventTaskDto> Tasks { get; set; }
     }
 
     public class GetEventHandler : IRequestHandler<GetEventQuery, GetEventResult>
@@ -55,7 +56,9 @@ namespace Application.Events
 
                 var e = await dBContext.Events
                     .Where(ev => ev.Id == request.EventId)
-                    .Include(ev => ev.EventMembers)      
+                    .Include(ev=> ev.Tasks)
+                    .ThenInclude(evt => evt.AssignedUser)
+                    .Include(ev => ev.EventMembers)
                     .ThenInclude(ue => ue.User)       
                     .FirstOrDefaultAsync();
 
@@ -66,7 +69,7 @@ namespace Application.Events
                     return result;
                 }
 
-                var eventDto = new EventDto
+                result.Event = new EventDto
                 {
                     Title = e.Title,
                     Description = e.Description,
@@ -83,7 +86,14 @@ namespace Application.Events
                     }).ToList()
                 };
 
-                result.Event = eventDto;
+                result.Tasks = e.Tasks.Select(t => new EventTaskDto
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    AssignedUserId = t.AssginedUserId,
+                    AssignedUserName = t.AssignedUser?.Name,
+                }).ToList();
+
                 result.Success = true;
                 return result;
             }

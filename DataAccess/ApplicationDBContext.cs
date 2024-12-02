@@ -15,6 +15,7 @@ public class ApplicationDBContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Event> Events { get; set; }
     public DbSet<UserEvent> UserEvents { get; set; }
+    public DbSet<EventTask> EventTasks { get; set; }
 
     public ApplicationDBContext(IConfiguration configuration)
     {
@@ -70,5 +71,17 @@ public class ApplicationDBContext : DbContext
             .HasOne(ue => ue.Event)
             .WithMany(e => e.EventMembers)
             .HasForeignKey(ue => ue.EventId);
+
+        modelBuilder.Entity<EventTask>()
+            .HasOne(t => t.Event)
+            .WithMany(e => e.Tasks)
+            .HasForeignKey(t => t.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<EventTask>()
+            .HasOne(t => t.AssignedUser)
+            .WithMany(u => u.AssignedTasks)
+            .HasForeignKey(t => t.AssginedUserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

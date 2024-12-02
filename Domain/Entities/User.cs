@@ -17,4 +17,5 @@ public class User
     public ICollection<UserEvent> Events { get; set; }
     public ICollection<Event> EventsOwned { get; set; }
 
+    public ICollection<EventTask> AssignedTasks { get; set; }
 }

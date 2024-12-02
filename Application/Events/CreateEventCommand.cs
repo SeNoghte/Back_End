@@ -16,7 +16,8 @@ namespace Application.Events
         public DateOnly Date { get; set; }
         public string? Time { get; set; }
         public Guid GroupId { get; set; }
-        public string ImagePath { get; set; }
+        public string? ImagePath { get; set; }
+        public List<string>? Tasks { get; set; }
     }
 
     public class CreateEventResult : ResultModel
@@ -124,8 +125,17 @@ namespace Application.Events
                     JoinedDate = DateTime.UtcNow,
                 };
 
+                var tasks = request.Tasks?.Select(title => new EventTask
+                {
+                    Id= Guid.NewGuid(),
+                    Title = title,
+                    EventId = newEvent.Id
+                });
+
                 await dBContext.Events.AddAsync(newEvent);
                 await dBContext.UserEvents.AddAsync(userEvent);
+                if(tasks is not null)
+                    await dBContext.EventTasks.AddRangeAsync(tasks);
                 await dBContext.SaveChangesAsync();
                 
                 result.Success = true;

@@ -23,6 +23,7 @@ namespace Application.Groups
     public class GetGroupResult : ResultModel
     {
         public GroupDto Group { get; set; }
+        public List<EventDto> Events { get; set; }
     }
 
     public class GetGroupHandler : IRequestHandler<GetGroupQuery, GetGroupResult>
@@ -57,8 +58,10 @@ namespace Application.Groups
                 var group = await dBContext.Groups
                         .Where(g => g.Id == request.GroupId)
                         .Include(g => g.Owner)           
-                        .Include(g => g.Members)         
-                        .ThenInclude(ug => ug.User)      
+                        .Include(g => g.Events)
+                        .ThenInclude(e => e.EventMembers)                    
+                        .Include(g => g.Members) 
+                        .ThenInclude(ug => ug.User)
                         .FirstOrDefaultAsync();
 
                 if (group == null)
@@ -68,7 +71,7 @@ namespace Application.Groups
                     return result;
                 }
 
-                var groupDto = new GroupDto
+                result.Group= new GroupDto
                 {
                     Id = group.Id,
                     Name = group.Name,
@@ -95,7 +98,20 @@ namespace Application.Groups
                     }).ToList()
                 };
 
-                result.Group = groupDto;
+                result.Events = group.Events.OrderBy(e => e.StartDate).Select(e => new EventDto
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    Description = e.Description,
+                    Date = e.StartDate.ToString(),
+                    Owner = new UserDto { 
+                        UserId = e.Owner.UserId,
+                        Name = e.Owner.Name,
+                        Image = e.Owner.Image,
+                    },
+                    ImagePath = e.ImagePath,                                    
+                }).ToList();
+
                 result.Success = true;
                 return result;
             }

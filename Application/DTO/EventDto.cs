@@ -8,8 +8,10 @@ namespace Application.DTO
 {
     public class EventDto
     {
+        public Guid Id { get; set; }
         public string Title { get; set; }
         public string? Description { get; set; }
+        public UserDto Owner { get; set; }
         public string Date { get; set; }  
         public string? Time { get; set; }  
         public Guid GroupId { get; set; }

@@ -96,7 +96,7 @@ namespace Application.Events
 
 
 
-                if(new DateTime(request.Date, TimeOnly.MaxValue) < dateTime)
+                if(new DateTime(request.Date, TimeOnly.MaxValue) < DateTime.UtcNow)
                 {
                     result.ErrorCode = 401;
                     result.Message = "تاریخ نامعتبر";

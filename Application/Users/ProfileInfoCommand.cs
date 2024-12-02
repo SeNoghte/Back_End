@@ -22,6 +22,7 @@ namespace Application.Users
     public class ProfileInfoResult : ResultModel
     {
         public UserDto User { get; set; }
+        public List<GroupDto> MyGroups { get; set; }
     }
 
     public class ProfileInfoHandler : IRequestHandler<ProfileInfoCommand, ProfileInfoResult>
@@ -52,7 +53,10 @@ namespace Application.Users
                     return result;
                 }
 
-                var user = await dBContext.Users.Where(u => u.UserId == UserId).FirstOrDefaultAsync();
+                var user = await dBContext.Users
+                .Include(u => u.Groups)
+                    .ThenInclude(ug => ug.Group)
+                .FirstOrDefaultAsync(u => u.UserId == UserId);
 
                 if (user == null)
                 {
@@ -60,6 +64,7 @@ namespace Application.Users
                     result.ErrorCode = 404;
                     return result;
                 }
+
                 result.User = new UserDto()
                 {
                     UserId = user.UserId,
@@ -69,6 +74,14 @@ namespace Application.Users
                     JoinedDate = user.JoinedDate,
                     Image = user.Image,
                 };
+
+                result.MyGroups = user.Groups.Select(g => new GroupDto
+                {
+                    Id = g.Group.Id,
+                    Name = g.Group.Name,
+                    Image = g.Group.Image
+                }).ToList();
+
                 result.Success = true;
 
                 return result;

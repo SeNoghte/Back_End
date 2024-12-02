@@ -63,5 +63,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(requset);
         }
+
+        [HttpPost(nameof(UserInfo))]
+        public async Task<ActionResult<UserInfoResult>> UserInfo([FromBody] UserInfoQuery requset)
+        {
+            return await mediator.Send(requset);
+        }
     }
 }

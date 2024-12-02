@@ -14,7 +14,7 @@ namespace Domain.Entities
         public Guid EventId { get; set; }
         public Event Event { get; set; }
 
-        public Guid? AssginedUserId { get; set; }
+        public Guid? AssignedUserId { get; set; }
         public User AssignedUser { get; set; }
     }
 }

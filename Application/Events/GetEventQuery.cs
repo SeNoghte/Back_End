@@ -90,7 +90,7 @@ namespace Application.Events
                 {
                     Id = t.Id,
                     Title = t.Title,
-                    AssignedUserId = t.AssginedUserId,
+                    AssignedUserId = t.AssignedUserId,
                     AssignedUserName = t.AssignedUser?.Name,
                 }).ToList();
 

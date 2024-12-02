@@ -148,7 +148,6 @@ namespace Application.Events
                 result.ErrorCode = 500;
                 result.Message = "مشکلی پیش آمده است";
                 return result;
-
             }
         }
     }

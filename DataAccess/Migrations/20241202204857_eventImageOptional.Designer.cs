@@ -71,7 +71,7 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AssginedUserId")
+                    b.Property<Guid?>("AssignedUserId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("EventId")
@@ -83,7 +83,7 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AssginedUserId");
+                    b.HasIndex("AssignedUserId");
 
                     b.HasIndex("EventId");
 
@@ -270,7 +270,7 @@ namespace DataAccess.Migrations
                 {
                     b.HasOne("Domain.Entities.User", "AssignedUser")
                         .WithMany("AssignedTasks")
-                        .HasForeignKey("AssginedUserId")
+                        .HasForeignKey("AssignedUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("Domain.Entities.Event", "Event")

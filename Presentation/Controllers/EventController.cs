@@ -29,4 +29,16 @@ public class EventController : BaseController
         return await mediator.Send(request);
     }
 
+    [HttpPost(nameof(AssignTaskToMe))]
+    public async Task<ActionResult<AssignTaskToUserResult>> AssignTaskToMe([FromBody] AssignTaskToUserCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
+    [HttpPost(nameof(RemoveTaskFromMe))]
+    public async Task<ActionResult<RemoveTaskFromUserResult>> RemoveTaskFromMe([FromBody] RemoveTaskFromUserCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
 }

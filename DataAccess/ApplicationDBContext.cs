@@ -81,7 +81,7 @@ public class ApplicationDBContext : DbContext
         modelBuilder.Entity<EventTask>()
             .HasOne(t => t.AssignedUser)
             .WithMany(u => u.AssignedTasks)
-            .HasForeignKey(t => t.AssginedUserId)
+            .HasForeignKey(t => t.AssignedUserId)
             .OnDelete(DeleteBehavior.SetNull);
     }
 }

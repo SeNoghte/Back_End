@@ -18,7 +18,7 @@ namespace DataAccess.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "text", nullable: false),
                     EventId = table.Column<Guid>(type: "uuid", nullable: false),
-                    AssginedUserId = table.Column<Guid>(type: "uuid", nullable: true)
+                    AssignedUserId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -30,17 +30,17 @@ namespace DataAccess.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_EventTasks_Users_AssginedUserId",
-                        column: x => x.AssginedUserId,
+                        name: "FK_EventTasks_Users_AssignedUserId",
+                        column: x => x.AssignedUserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
                         onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventTasks_AssginedUserId",
+                name: "IX_EventTasks_AssignedUserId",
                 table: "EventTasks",
-                column: "AssginedUserId");
+                column: "AssignedUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EventTasks_EventId",

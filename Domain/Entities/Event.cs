@@ -15,7 +15,10 @@
 
         public Guid OwnerId { get; set; }
         public User Owner { get; set; }
-
+        public int? CityId { get; set; }
+        public string? Address { get; set; }
+        public decimal? Longitude {  get; set; }
+        public decimal? Latitude {  get; set; }
         public ICollection<UserEvent> EventMembers { get; set; }
 
         public ICollection<EventTask> Tasks { get; set; }

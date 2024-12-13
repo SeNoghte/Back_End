@@ -18,6 +18,10 @@ namespace Application.Events
         public Guid GroupId { get; set; }
         public string? ImagePath { get; set; }
         public List<string>? Tasks { get; set; }
+        public int? CityId { get; set; }
+        public string? Address { get; set; }
+        public decimal? Longitude { get; set; }
+        public decimal? Latitude { get; set; }
     }
 
     public class CreateEventResult : ResultModel
@@ -114,7 +118,11 @@ namespace Application.Events
                     CreatedDate = DateTime.UtcNow,
                     ImagePath = request.ImagePath,
                     GroupId = request.GroupId,
-                    OwnerId = currentUser.UserId
+                    OwnerId = currentUser.UserId,
+                    CityId = request.CityId,
+                    Address = request.Address,
+                    Latitude = request.Latitude,
+                    Longitude = request.Longitude
                 };
 
 

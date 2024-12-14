@@ -13,6 +13,7 @@ namespace Application.Users
         public string Name { get; set; }
         public string? Username { get; set; }
         public string? Image { get; set; }
+        public string? AboutMe { get; set; }
     }
 
     public class EditProfileResult : ResultModel
@@ -92,6 +93,7 @@ namespace Application.Users
 
                 user.Name = request.Name;
                 user.Username = request.Username;
+                user.AboutMe = request.AboutMe;
 
                 if (!string.IsNullOrEmpty(request.Image))
                 {
@@ -108,6 +110,7 @@ namespace Application.Users
                     Image = user.Image,
                     JoinedDate = user.JoinedDate,
                     Username = user.Username,
+                    AboutMe = user.AboutMe,
                 };
                 result.Success = true;
                 return result;

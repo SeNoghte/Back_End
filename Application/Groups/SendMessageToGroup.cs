@@ -71,11 +71,14 @@ public class SendMessageToGroupHandler : IRequestHandler<SendMessageToGroup, Sen
 
         var messageForFront = new
         {
-            username = user.Username,
-            text = request.Text
+            userName = user.Name,
+            text = request.Text,
+            sentTime = newMessage.SentTime,
+            userId = newMessage.UserId.ToString(),
+            isMe = false
         };
 
-        await _messageHub.Clients.Groups(request.GroupId.ToString()).SendAsync("NewMessage", messageForFront);
+        await _messageHub.Clients.Groups(request.GroupId.ToString()).SendAsync("ReceiveMessage", messageForFront);
         
         result.Success = true;
         return result;

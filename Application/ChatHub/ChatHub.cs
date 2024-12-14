@@ -14,23 +14,20 @@ namespace Application.ChatHubs;
 
 public class ChatHub: Hub
 {
-    public void joinGroupHub(int groupId)
+    public async Task JoinGroup(string groupName)
     {
-        var connectionId = Context.ConnectionId;
-        Groups.AddToGroupAsync(connectionId, groupId.ToString());
-        Clients.Client(connectionId).SendAsync("joinGroup", $"You joined to group hub successfully");
+        await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        await Clients.Group(groupName).SendAsync("ReceiveMessage", "System", $"{Context.ConnectionId} has joined the group {groupName}");
     }
 
-    public override Task OnConnectedAsync()
+    public async Task LeaveGroup(string groupName)
     {
-        var connectionId = Context.ConnectionId;
-        Clients.Client(connectionId).SendAsync("WelcomeMethodName", connectionId);
-        return base.OnConnectedAsync();
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
+        await Clients.Group(groupName).SendAsync("ReceiveMessage", "System", $"{Context.ConnectionId} has left the group {groupName}");
     }
 
-    public override Task OnDisconnectedAsync(Exception exception)
+    public async Task SendMessageToGroup(string groupName, string user, string message)
     {
-        var connectionId = Context.ConnectionId;
-        return base.OnDisconnectedAsync(exception);
+        await Clients.Group(groupName).SendAsync("ReceiveMessage", user, message);
     }
 }

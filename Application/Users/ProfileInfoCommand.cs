@@ -73,6 +73,7 @@ namespace Application.Users
                     Username = user.Username,
                     JoinedDate = user.JoinedDate,
                     Image = user.Image,
+                    AboutMe = user.AboutMe,                    
                 };
 
                 result.MyGroups = user.Groups.Select(g => new GroupDto

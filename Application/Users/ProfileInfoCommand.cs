@@ -79,6 +79,7 @@ namespace Application.Users
                 result.MyGroups = user.Groups.Select(g => new GroupDto
                 {
                     Id = g.Group.Id,
+                    IsPrivate = g.Group.IsPrivate,
                     Name = g.Group.Name,
                     Image = g.Group.Image
                 }).ToList();

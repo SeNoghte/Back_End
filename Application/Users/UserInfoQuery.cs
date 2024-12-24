@@ -88,6 +88,7 @@ namespace Application.Users
                     .Select(ug => new GroupDto
                     {
                         Id = ug.Group.Id,
+                        IsPrivate = ug.Group.IsPrivate,
                         Name = ug.Group.Name,
                         Image = ug.Group.Image
                     })

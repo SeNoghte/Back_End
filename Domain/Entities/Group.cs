@@ -7,6 +7,7 @@
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }      
         public string? Image { get; set; }
+        public bool IsPrivate { get; set; }      
         public ICollection<UserGroup> Members { get; set; }
 
         public Guid OwnerId { get; set; }

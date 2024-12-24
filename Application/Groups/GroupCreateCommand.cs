@@ -20,6 +20,7 @@ namespace Application.Groups
     public class GroupCreateCommand : IRequest<GroupCreateResult>
     {
         public string Name { get; set; }
+        public bool IsPrivate { get; set; }
         public string? Description { get; set; }
         public string? ImageUrl { get; set; }
         public List<Guid>? MembersToAdd { get; set; }
@@ -88,6 +89,7 @@ namespace Application.Groups
                 var gp = new Group
                 {
                     Name = request.Name,
+                    IsPrivate = request.IsPrivate,
                     Description = request.Description,
                     CreatedDate = DateTime.UtcNow,
                     OwnerId = (Guid)UserId,

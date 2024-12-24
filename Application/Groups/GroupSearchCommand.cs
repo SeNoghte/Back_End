@@ -12,6 +12,7 @@ namespace Application.Groups
     public class GroupSearchCommand : IRequest<GroupSearchResult>
     {
         public string Filter { get; set; }
+        public bool? IsPrivate { get; set; }
         public int PageIndex { get; set; } = 1;
         public int PageSize { get; set; } = 10;
     }
@@ -73,10 +74,28 @@ namespace Application.Groups
                         .OrderBy(gp => gp.Name);
                 }
 
-                groupsQuery = groupsQuery
-                    .Skip((request.PageIndex - 1) * request.PageSize)
-                    .Take(request.PageSize)
-                    .OrderBy(gp => gp.Name);
+
+                if(request.IsPrivate == null)
+                {
+                    groupsQuery = groupsQuery
+                        .Skip((request.PageIndex - 1) * request.PageSize)
+                        .Take(request.PageSize)
+                        .OrderBy(gp => gp.Name);
+                }
+                else if(request.IsPrivate == true)
+                {
+                    groupsQuery = groupsQuery.Where(g => g.IsPrivate)
+                        .Skip((request.PageIndex - 1) * request.PageSize)
+                        .Take(request.PageSize)
+                        .OrderBy(gp => gp.Name);
+                }
+                else if(request.IsPrivate == false)
+                {
+                    groupsQuery = groupsQuery.Where(g => !g.IsPrivate)
+                        .Skip((request.PageIndex - 1) * request.PageSize)
+                        .Take(request.PageSize)
+                        .OrderBy(gp => gp.Name);
+                }
 
                 var groups = await groupsQuery.ToListAsync();
 
@@ -84,6 +103,7 @@ namespace Application.Groups
                 result.FilteredGroups = groups.Select(g => new GroupDto
                 {
                     Id = g.Id,
+                    IsPrivate = g.IsPrivate,
                     Name = g.Name,
                     Description = g.Description,
                     Image = g.Image

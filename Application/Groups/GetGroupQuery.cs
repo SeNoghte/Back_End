@@ -74,6 +74,7 @@ namespace Application.Groups
                 result.Group= new GroupDto
                 {
                     Id = group.Id,
+                    IsPrivate = group.IsPrivate,
                     Name = group.Name,
                     Description = group.Description,
                     CreatedDate = group.CreatedDate,

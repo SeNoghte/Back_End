@@ -24,6 +24,7 @@ namespace Application.Events
     {
         public EventDto Event { get; set; }
         public List<EventTaskDto> Tasks { get; set; }
+        public List<EventTagDto> Tags { get; set; }
     }
 
     public class GetEventHandler : IRequestHandler<GetEventQuery, GetEventResult>
@@ -58,6 +59,7 @@ namespace Application.Events
                     .Where(ev => ev.Id == request.EventId)
                     .Include(ev=> ev.Tasks)
                     .ThenInclude(evt => evt.AssignedUser)
+                    .Include(ev => ev.Tags)
                     .Include(ev => ev.EventMembers)
                     .ThenInclude(ue => ue.User)       
                     .FirstOrDefaultAsync();
@@ -77,6 +79,7 @@ namespace Application.Events
                     Time = e.StartDate.ToString("HH:mm:ss"),
                     GroupId = e.GroupId,
                     ImagePath = e.ImagePath,   
+                    IsPrivate = e.IsPrivate,
                     Members = e.EventMembers.Select(em => new UserDto
                     {
                         UserId = em.User.UserId,
@@ -92,6 +95,12 @@ namespace Application.Events
                     Title = t.Title,
                     AssignedUserId = t.AssignedUserId,
                     AssignedUserName = t.AssignedUser?.Name,
+                }).ToList();
+
+                result.Tags = e.Tags.Select(t => new EventTagDto
+                {
+                    Id = t.Id,
+                    Tag = t.Tag,
                 }).ToList();
 
                 result.Success = true;

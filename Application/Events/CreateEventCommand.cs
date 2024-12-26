@@ -17,7 +17,9 @@ namespace Application.Events
         public string? Time { get; set; }
         public Guid GroupId { get; set; }
         public string? ImagePath { get; set; }
+        public bool IsPrivate { get; set; }
         public List<string>? Tasks { get; set; }
+        public List<string>? Tags { get; set; }
         public int? CityId { get; set; }
         public string? Address { get; set; }
         public decimal? Longitude { get; set; }
@@ -116,6 +118,7 @@ namespace Application.Events
                     StartDate = dateTime,
                     EndDate = dateTime.AddDays(1),
                     CreatedDate = DateTime.UtcNow,
+                    IsPrivate = request.IsPrivate,
                     ImagePath = request.ImagePath,
                     GroupId = request.GroupId,
                     OwnerId = currentUser.UserId,
@@ -140,10 +143,22 @@ namespace Application.Events
                     EventId = newEvent.Id
                 });
 
+                var tags = request.Tags?.Select(tag => new EventTag
+                {
+                    Id = Guid.NewGuid(),
+                    Tag = tag,
+                    EventId = newEvent.Id
+                });
+
                 await dBContext.Events.AddAsync(newEvent);
                 await dBContext.UserEvents.AddAsync(userEvent);
-                if(tasks is not null)
+
+                if(request.IsPrivate && tasks is not null)
                     await dBContext.EventTasks.AddRangeAsync(tasks);
+
+                if (!request.IsPrivate && tags is not null)
+                    await dBContext.EventTags.AddRangeAsync(tags);
+
                 await dBContext.SaveChangesAsync();
                 
                 result.Success = true;

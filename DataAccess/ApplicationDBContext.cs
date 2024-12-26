@@ -16,6 +16,7 @@ public class ApplicationDBContext : DbContext
     public DbSet<Event> Events { get; set; }
     public DbSet<UserEvent> UserEvents { get; set; }
     public DbSet<EventTask> EventTasks { get; set; }
+    public DbSet<EventTag> EventTags { get; set; }
 
     public ApplicationDBContext(IConfiguration configuration)
     {
@@ -83,5 +84,11 @@ public class ApplicationDBContext : DbContext
             .WithMany(u => u.AssignedTasks)
             .HasForeignKey(t => t.AssignedUserId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<EventTag>()
+            .HasOne(t => t.Event)
+            .WithMany(e => e.Tags)
+            .HasForeignKey(t => t.EventId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

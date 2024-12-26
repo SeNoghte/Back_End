@@ -9,6 +9,8 @@
         public DateTime EndDate { get; set; }
         public DateTime CreatedDate { get; set; }
         public string? ImagePath { get; set; }
+        public int MaxMembers { get; set; }
+        public bool IsPrivate { get; set; }
 
         public Guid GroupId { get; set; }
         public Group Group { get; set; }
@@ -21,7 +23,9 @@
         public decimal? Latitude {  get; set; }
         public ICollection<UserEvent> EventMembers { get; set; }
 
-        public ICollection<EventTask> Tasks { get; set; }
+        public ICollection<EventTask>? Tasks { get; set; }
+
+        public ICollection<EventTag>? Tags { get; set; }
 
     }
 }

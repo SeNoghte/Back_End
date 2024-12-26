@@ -16,6 +16,7 @@ namespace Application.DTO
         public string? Time { get; set; }  
         public Guid GroupId { get; set; }
         public string ImagePath { get; set; }
+        public bool IsPrivate { get; set; } 
         public List<UserDto> Members { get; set; }
     }
 }

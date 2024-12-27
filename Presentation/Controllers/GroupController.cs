@@ -58,5 +58,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(GetPublicGroupsListByTag))]
+        public async Task<ActionResult<GetPublicGroupsListByTagResult>> GetPublicGroupsListByTag([FromBody] GetPublicGroupsListByTagQuery request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

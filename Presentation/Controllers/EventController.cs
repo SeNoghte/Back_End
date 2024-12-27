@@ -11,12 +11,6 @@ public class EventController : BaseController
 
     }
 
-    [HttpPost(nameof(SaveEvent))]
-    public async Task<ActionResult<SaveEventResult>> SaveEvent([FromBody] SaveEventCommand request)
-    {
-        return await mediator.Send(request);
-    }
-
     [HttpPost(nameof(Create))]
     public async Task<ActionResult<CreateEventResult>> Create([FromBody] CreateEventCommand request)
     {
@@ -37,6 +31,12 @@ public class EventController : BaseController
 
     [HttpPost(nameof(RemoveTaskFromMe))]
     public async Task<ActionResult<RemoveTaskFromUserResult>> RemoveTaskFromMe([FromBody] RemoveTaskFromUserCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
+    [HttpPost(nameof(GetPublicTasksListByTag))]
+    public async Task<ActionResult<GetPublicEventListByTagResult>> GetPublicTasksListByTag([FromBody] GetPublicEventsListByTagQuery request)
     {
         return await mediator.Send(request);
     }

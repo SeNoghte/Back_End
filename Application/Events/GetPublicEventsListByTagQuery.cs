@@ -44,7 +44,7 @@ public class GetPublicEventsListByTagHandler : IRequestHandler<GetPublicEventsLi
         var currentUserId = identityService.GetCurrentUserId();
 
         var query = dBContext.Events.Include(x => x.EventMembers).Include(x => x.Owner)
-            .Where(x => !x.IsPrivate && x.EventMembers.Count() < x.MaxMembers && !x.EventMembers.Any(y => y.UserId == currentUserId));
+            .Where(x => !x.IsPrivate && !x.EventMembers.Any(y => y.UserId == currentUserId));
 
         if (!string.IsNullOrEmpty(request.Tag))
         {

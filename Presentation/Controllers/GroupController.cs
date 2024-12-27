@@ -64,5 +64,11 @@ namespace Presentation.Controllers
         {
             return await mediator.Send(request);
         }
+
+        [HttpPost(nameof(GetPublicGroupListSearch))]
+        public async Task<ActionResult<GetPublicGroupListSearchResult>> GetPublicGroupListSearch([FromBody] GetPublicGroupListSearchQuery request)
+        {
+            return await mediator.Send(request);
+        }
     }
 }

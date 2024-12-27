@@ -47,4 +47,10 @@ public class EventController : BaseController
         return await mediator.Send(request);
     }
 
+    [HttpPost(nameof(GetPublicEventListSearch))]
+    public async Task<ActionResult<GetPublicEventListSearchResult>> GetPublicEventListSearch([FromBody] GetPublicEventListSearchQuery request)
+    {
+        return await mediator.Send(request);
+    }
+
 }

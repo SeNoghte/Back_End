@@ -77,7 +77,7 @@ namespace Application.Groups
                     IsPrivate = group.IsPrivate,
                     Name = group.Name,
                     Description = group.Description,
-                    CreatedDate = group.CreatedDate,
+                    CreatedDate = group.CreatedDate,                 
                     Image = group.Image,
                     Owner = new UserDto
                     {
@@ -105,6 +105,7 @@ namespace Application.Groups
                     Title = e.Title,
                     Description = e.Description,
                     Date = e.StartDate.ToString(),
+                    IsPrivate =e.IsPrivate,
                     Owner = new UserDto { 
                         UserId = e.Owner.UserId,
                         Name = e.Owner.Name,

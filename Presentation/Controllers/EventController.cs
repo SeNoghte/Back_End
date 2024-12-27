@@ -29,6 +29,12 @@ public class EventController : BaseController
         return await mediator.Send(request);
     }
 
+    [HttpPost(nameof(JoinEvent))]
+    public async Task<ActionResult<JoinEvenResult>> JoinEvent([FromBody] JoinEventCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
     [HttpPost(nameof(AssignTaskToMe))]
     public async Task<ActionResult<AssignTaskToUserResult>> AssignTaskToMe([FromBody] AssignTaskToUserCommand request)
     {

@@ -11,8 +11,8 @@ public class EventController : BaseController
 
     }
 
-    [HttpPost(nameof(SaveEvent))]
-    public async Task<ActionResult<SaveEventResult>> SaveEvent([FromBody] SaveEventCommand request)
+    [HttpPost(nameof(GetMyEvents))]
+    public async Task<ActionResult<GetMyEventsResult>> GetMyEvents([FromBody] GetMyEventsQuery request)
     {
         return await mediator.Send(request);
     }

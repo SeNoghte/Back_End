@@ -63,6 +63,8 @@ namespace Application.Events
                     Id = e.Event.Id,
                     IsPrivate = e.Event.IsPrivate,
                     Title = e.Event.Title,
+                    Date = e.Event.StartDate.ToString("yyyy-MM-dd"),
+                    Time = e.Event.StartDate.ToString("HH:mm:ss"),
                     ImagePath = e.Event.ImagePath
                 }).ToList();
 

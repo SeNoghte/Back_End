@@ -56,13 +56,16 @@ namespace Application.Groups
                 }
 
                 var group = await dBContext.Groups
-                        .Where(g => g.Id == request.GroupId)
-                        .Include(g => g.Owner)           
-                        .Include(g => g.Events)
-                        .ThenInclude(e => e.EventMembers)                    
-                        .Include(g => g.Members) 
-                        .ThenInclude(ug => ug.User)
-                        .FirstOrDefaultAsync();
+                                .Where(g => g.Id == request.GroupId)
+                                .Include(g => g.Owner) 
+                                .Include(g => g.Events) 
+                                    .ThenInclude(e => e.EventMembers) 
+                                .Include(g => g.Events)
+                                    .ThenInclude(e => e.Owner) 
+                                .Include(g => g.Members)
+                                    .ThenInclude(ug => ug.User)
+                                .FirstOrDefaultAsync();
+
 
                 if (group == null)
                 {

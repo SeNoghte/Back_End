@@ -74,6 +74,9 @@ namespace Application.Groups
                     return result;
                 }
 
+
+                var isCurrentUserAMember = await dBContext.UserGroups.AnyAsync(ug => ug.UserId == userId && ug.GroupId == group.Id);
+
                 result.Group= new GroupDto
                 {
                     Id = group.Id,
@@ -83,6 +86,7 @@ namespace Application.Groups
                     CreatedDate = group.CreatedDate,                 
                     Image = group.Image,
                     IsAdmin = userId == group.Owner.UserId,
+                    IsMember = isCurrentUserAMember,
                     Owner = new UserDto
                     {
                         UserId = group.Owner.UserId,

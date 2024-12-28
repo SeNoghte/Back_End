@@ -14,9 +14,10 @@ namespace Application.DTO
         public bool IsPrivate { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedDate { get; set; }
-        public UserDto Owner { get; set; }
-        public List<UserDto> Members { get; set; }
         public string Image { get; set; }
         public bool IsAdmin { get; set; }
+        public bool IsMember { get; set; }
+        public UserDto Owner { get; set; }
+        public List<UserDto> Members { get; set; }
     }
 }

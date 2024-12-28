@@ -79,6 +79,7 @@ namespace Application.Groups
                     Description = group.Description,
                     CreatedDate = group.CreatedDate,                 
                     Image = group.Image,
+                    IsAdmin = userId == group.Owner.UserId,
                     Owner = new UserDto
                     {
                         UserId = group.Owner.UserId,

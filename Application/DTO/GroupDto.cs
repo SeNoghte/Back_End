@@ -17,5 +17,6 @@ namespace Application.DTO
         public UserDto Owner { get; set; }
         public List<UserDto> Members { get; set; }
         public string Image { get; set; }
+        public bool IsAdmin { get; set; }
     }
 }

@@ -53,6 +53,12 @@ namespace Presentation.Controllers
             return await mediator.Send(request);
         }
 
+        [HttpPost(nameof(Leave))]
+        public async Task<ActionResult<LeaveGroupResult>> Leave([FromBody] LeaveGroupCommand request)
+        {
+            return await mediator.Send(request);
+        }
+
         [HttpPost(nameof(GetGroup))]
         public async Task<ActionResult<GetGroupResult>> GetGroup([FromBody] GetGroupQuery request)
         {

@@ -11,6 +11,12 @@ public class EventController : BaseController
 
     }
 
+    [HttpPost(nameof(GetMyEvents))]
+    public async Task<ActionResult<GetMyEventsResult>> GetMyEvents([FromBody] GetMyEventsQuery request)
+    {
+        return await mediator.Send(request);
+    }
+
     [HttpPost(nameof(Create))]
     public async Task<ActionResult<CreateEventResult>> Create([FromBody] CreateEventCommand request)
     {

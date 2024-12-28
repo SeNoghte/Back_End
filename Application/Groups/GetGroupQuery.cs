@@ -56,13 +56,16 @@ namespace Application.Groups
                 }
 
                 var group = await dBContext.Groups
-                        .Where(g => g.Id == request.GroupId)
-                        .Include(g => g.Owner)           
-                        .Include(g => g.Events)
-                        .ThenInclude(e => e.EventMembers)                    
-                        .Include(g => g.Members) 
-                        .ThenInclude(ug => ug.User)
-                        .FirstOrDefaultAsync();
+                                .Where(g => g.Id == request.GroupId)
+                                .Include(g => g.Owner) 
+                                .Include(g => g.Events) 
+                                    .ThenInclude(e => e.EventMembers) 
+                                .Include(g => g.Events)
+                                    .ThenInclude(e => e.Owner) 
+                                .Include(g => g.Members)
+                                    .ThenInclude(ug => ug.User)
+                                .FirstOrDefaultAsync();
+
 
                 if (group == null)
                 {
@@ -70,6 +73,9 @@ namespace Application.Groups
                     result.Message = "گروه پیدا نشد";
                     return result;
                 }
+
+
+                var isCurrentUserAMember = await dBContext.UserGroups.AnyAsync(ug => ug.UserId == userId && ug.GroupId == group.Id);
 
                 result.Group= new GroupDto
                 {
@@ -79,6 +85,8 @@ namespace Application.Groups
                     Description = group.Description,
                     CreatedDate = group.CreatedDate,                 
                     Image = group.Image,
+                    IsAdmin = userId == group.Owner.UserId,
+                    IsMember = isCurrentUserAMember,
                     Owner = new UserDto
                     {
                         UserId = group.Owner.UserId,

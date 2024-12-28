@@ -59,4 +59,10 @@ public class EventController : BaseController
         return await mediator.Send(request);
     }
 
+    [HttpPost(nameof(GetMostUsedTagsList))]
+    public async Task<ActionResult<GetMostUsedTagsListResult>> GetMostUsedTagsList([FromBody] GetMostUsedTagsListQuery request)
+    {
+        return await mediator.Send(request);
+    }
+
 }

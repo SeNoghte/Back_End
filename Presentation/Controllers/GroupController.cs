@@ -19,6 +19,12 @@ namespace Presentation.Controllers
             return await mediator.Send(request);
         }
 
+        [HttpPost(nameof(EditGroup))]
+        public async Task<ActionResult<EditGroupResult>> EditGroup([FromBody] EditGroupCommand request)
+        {
+            return await mediator.Send(request);
+        }
+
         [HttpPost(nameof(GetGroups))]
         public async Task<ActionResult<GroupSearchResult>> GetGroups([FromBody] GroupSearchCommand request)
         {
@@ -75,6 +81,7 @@ namespace Presentation.Controllers
         public async Task<ActionResult<GetPublicGroupListSearchResult>> GetPublicGroupListSearch([FromBody] GetPublicGroupListSearchQuery request)
         {
             return await mediator.Send(request);
-        }
+        }      
+
     }
 }

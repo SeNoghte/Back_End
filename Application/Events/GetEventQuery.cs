@@ -84,8 +84,10 @@ namespace Application.Events
                     {
                         UserId = em.User.UserId,
                         Username = em.User.Username,
+                        Name = em.User.Name,
                         Email = em.User.Email,
                         Image = em.User.Image
+
                     }).ToList()
                 };
 

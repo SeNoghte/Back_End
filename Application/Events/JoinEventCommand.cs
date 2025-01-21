@@ -68,7 +68,7 @@ namespace Application.Events
                     return result;
                 }
 
-                if (targetEvent.StartDate > DateTime.UtcNow)
+                if (targetEvent.StartDate < DateTime.UtcNow)
                 {
                     result.ErrorCode = 404;
                     result.Message = "این برنامه منقضی شده است";

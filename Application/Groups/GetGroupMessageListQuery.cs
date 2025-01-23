@@ -27,6 +27,8 @@ public class MessageModel
 {
     public string Text { get; set; }
     public string Username { get; set; }
+
+    public string Image { get; set; }   
     public DateTime SentTime { get; set; }
     public Guid UserId { get; set; }
 }
@@ -73,7 +75,8 @@ public class GetGroupMessageListHandler : IRequestHandler<GetGroupMessageListQue
             Text = m.Text,
             SentTime = m.SentTime,
             Username = m.User.Name,
-            UserId = m.UserId
+            UserId = m.UserId,
+            Image = m.User.Image       
         })
         .ToListAsync();
 

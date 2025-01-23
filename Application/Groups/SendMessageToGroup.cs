@@ -72,6 +72,7 @@ public class SendMessageToGroupHandler : IRequestHandler<SendMessageToGroup, Sen
         var messageForFront = new
         {
             userName = user.Name,
+            image = user.Image,
             text = request.Text,
             sentTime = newMessage.SentTime,
             userId = newMessage.UserId.ToString(),

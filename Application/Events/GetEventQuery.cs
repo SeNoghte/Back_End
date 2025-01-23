@@ -62,7 +62,9 @@ namespace Application.Events
                     .ThenInclude(evt => evt.AssignedUser)
                     .Include(ev => ev.Tags)
                     .Include(ev => ev.EventMembers)
-                    .ThenInclude(ue => ue.User)       
+                    .ThenInclude(ue => ue.User)
+                    .Include(ev => ev.Owner)
+                    .Include(ev => ev.Group)
                     .FirstOrDefaultAsync();
 
                 if (e == null)
@@ -80,6 +82,8 @@ namespace Application.Events
                     Date = e.StartDate.ToString("yyyy-MM-dd"),
                     Time = e.StartDate.ToString("HH:mm:ss"),
                     GroupId = e.GroupId,
+                    GroupName = e.Group.Name,
+                    GroupImage = e.Group.Image,
                     ImagePath = e.ImagePath,   
                     IsPrivate = e.IsPrivate,
                     Owner = new UserDto
@@ -98,8 +102,17 @@ namespace Application.Events
                         Name = em.User.Name,
                         Email = em.User.Email,
                         Image = em.User.Image
+                    }).ToList(),
+                    Owner = new UserDto
+                    {
+                        UserId = e.Owner.UserId,
+                        Name = e.Owner.Name,
+                        Username = e.Owner.Username,
+                        Email = e.Owner.Email,
+                        JoinedDate = e.Owner.JoinedDate,
+                        Image = e.Owner.Image
+                    }
 
-                    }).ToList()
                 };
 
                 result.Tasks = e.Tasks.Select(t => new EventTaskDto
@@ -107,7 +120,7 @@ namespace Application.Events
                     Id = t.Id,
                     Title = t.Title,
                     AssignedUserId = t.AssignedUserId,
-                    AssignedUserName = t.AssignedUser?.Name,
+                    AssignedUserName = t.AssignedUser?.Username,
                 }).ToList();
 
                 result.Tags = e.Tags.Select(t => new EventTagDto

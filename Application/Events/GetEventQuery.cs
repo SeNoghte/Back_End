@@ -102,16 +102,7 @@ namespace Application.Events
                         Name = em.User.Name,
                         Email = em.User.Email,
                         Image = em.User.Image
-                    }).ToList(),
-                    Owner = new UserDto
-                    {
-                        UserId = e.Owner.UserId,
-                        Name = e.Owner.Name,
-                        Username = e.Owner.Username,
-                        Email = e.Owner.Email,
-                        JoinedDate = e.Owner.JoinedDate,
-                        Image = e.Owner.Image
-                    }
+                    }).ToList(),                   
 
                 };
 

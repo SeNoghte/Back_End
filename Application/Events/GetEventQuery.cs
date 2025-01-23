@@ -57,6 +57,7 @@ namespace Application.Events
 
                 var e = await dBContext.Events
                     .Where(ev => ev.Id == request.EventId)
+                    .Include(e => e.Owner)
                     .Include(ev=> ev.Tasks)
                     .ThenInclude(evt => evt.AssignedUser)
                     .Include(ev => ev.Tags)
@@ -73,6 +74,7 @@ namespace Application.Events
 
                 result.Event = new EventDto
                 {
+                    Id = e.Id,
                     Title = e.Title,
                     Description = e.Description,
                     Date = e.StartDate.ToString("yyyy-MM-dd"),
@@ -80,6 +82,15 @@ namespace Application.Events
                     GroupId = e.GroupId,
                     ImagePath = e.ImagePath,   
                     IsPrivate = e.IsPrivate,
+                    Owner = new UserDto
+                    {
+                        UserId = e.Owner.UserId,
+                        Name = e.Owner.Name,
+                        Username = e.Owner.Username,
+                        Email = e.Owner.Email,
+                        JoinedDate = e.Owner.JoinedDate,
+                        Image = e.Owner.Image
+                    },
                     Members = e.EventMembers.Select(em => new UserDto
                     {
                         UserId = em.User.UserId,

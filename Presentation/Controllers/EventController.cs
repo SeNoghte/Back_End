@@ -65,4 +65,10 @@ public class EventController : BaseController
         return await mediator.Send(request);
     }
 
+    [HttpPost(nameof(LeaveEvent))]
+    public async Task<ActionResult<LeaveEventResult>> LeaveEvent([FromBody] LeaveEventCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
 }

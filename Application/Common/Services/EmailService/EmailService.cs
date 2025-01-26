@@ -14,19 +14,21 @@ namespace Application.Common.Services.EmailService
         string emailHost;
         string emailUserName;
         string emailPassword;
+        string senderEmailAddress;
         public EmailService(IConfiguration _config)
         {
             config = _config;
             emailUserName = config.GetSection("EmailService:EmailUsername").Value!;
             emailHost = config.GetSection("EmailService:EmailHost").Value!;
             emailPassword = config.GetSection("EmailService:EmailPassword").Value!;
+            senderEmailAddress = config.GetSection("EmailService:SenderEmailAddress").Value!;
         }
 
         public async Task SendMail(string email, string subject, string body)
         {
             var emailModel = new MimeMessage();
 
-            emailModel.From.Add(new MailboxAddress("بچین", emailUserName));
+            emailModel.From.Add(new MailboxAddress("بچین", senderEmailAddress));
             emailModel.To.Add(MailboxAddress.Parse(email));
             emailModel.Subject = subject;
             emailModel.Body = new TextPart(TextFormat.Html) { Text = body };

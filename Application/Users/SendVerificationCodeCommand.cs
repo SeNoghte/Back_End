@@ -69,7 +69,7 @@ namespace Application.Users
             string code = rnd.Next(10000, 100000).ToString();
             string subject = "کد تایید بچین";
 
-            await _emailService.SendMail(request.Email, code, subject);
+            await _emailService.SendMail(request.Email, subject, code);
 
             PendingVerification pv = new PendingVerification()
             {

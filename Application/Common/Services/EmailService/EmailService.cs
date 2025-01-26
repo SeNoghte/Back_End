@@ -10,26 +10,31 @@ namespace Application.Common.Services.EmailService
 {
     public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
-
-        public EmailService(IConfiguration configuration)
+        IConfiguration config;
+        string emailHost;
+        string emailUserName;
+        string emailPassword;
+        public EmailService(IConfiguration _config)
         {
-            _configuration = configuration;
+            config = _config;
+            emailUserName = config.GetSection("EmailService:EmailUsername").Value!;
+            emailHost = config.GetSection("EmailService:EmailHost").Value!;
+            emailPassword = config.GetSection("EmailService:EmailPassword").Value!;
         }
 
         public async Task SendMail(string email, string subject, string body)
         {
             var emailModel = new MimeMessage();
 
-            emailModel.From.Add(MailboxAddress.Parse(_configuration.GetSection("EmailService:EmailUsername").Value));
+            emailModel.From.Add(new MailboxAddress("بچین", emailUserName));
             emailModel.To.Add(MailboxAddress.Parse(email));
             emailModel.Subject = subject;
             emailModel.Body = new TextPart(TextFormat.Html) { Text = body };
 
             using SmtpClient client = new(new ProtocolLogger("smtp.log"));
             client.ServerCertificateValidationCallback = (s, c, h, e) => true;
-            await client.ConnectAsync(_configuration.GetSection("EmailService:EmailHost").Value, 587, SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_configuration.GetSection("EmailService:EmailUsername").Value, _configuration.GetSection("EmailService:EmailPassword").Value);
+            await client.ConnectAsync(emailHost, 587, SecureSocketOptions.StartTls);
+            await client.AuthenticateAsync(emailUserName, emailPassword);
             await client.SendAsync(emailModel);
             await client.DisconnectAsync(true);
         }

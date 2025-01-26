@@ -66,10 +66,10 @@ namespace Application.Users
             
 
             Random rnd = new Random();
-            string code = "12345";
+            string code = rnd.Next(10000, 100000).ToString();
             string subject = "کد تایید بچین";
 
-            //await _emailService.SendMail(request.Email, code, subject);
+            await _emailService.SendMail(request.Email, code, subject);
 
             PendingVerification pv = new PendingVerification()
             {

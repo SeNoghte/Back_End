@@ -217,3 +217,43 @@ C: .
 S: 250 Message queued.
 C: QUIT
 S: 221 Bye
+Connected to smtp://smtp.c1.liara.email:587/?starttls=always
+S: 220 mail-relay--1--pop-16 ESMTP .:Liara SMTP Server:.
+C: EHLO DESKTOP-ROOGKOE
+S: 250-mail-relay--1--pop-16 Nice to meet you, [194.225.232.6]
+S: 250-PIPELINING
+S: 250-8BITMIME
+S: 250-SMTPUTF8
+S: 250-AUTH LOGIN PLAIN
+S: 250-STARTTLS
+S: 250 SIZE 10485760
+C: STARTTLS
+S: 220 Ready to start TLS
+C: EHLO DESKTOP-ROOGKOE
+S: 250-mail-relay--1--pop-16 Nice to meet you, [194.225.232.6]
+S: 250-PIPELINING
+S: 250-8BITMIME
+S: 250-SMTPUTF8
+S: 250-AUTH LOGIN PLAIN
+S: 250 SIZE 10485760
+C: AUTH PLAIN ********
+S: 235 Authentication successful
+C: MAIL FROM:<info@support.becheen-mail.ir> SIZE=317
+C: RCPT TO:<www.mahdiesteghlal@gmail.com>
+S: 250 Accepted
+S: 250 Accepted
+C: DATA
+S: 354 End data with <CR><LF>.<CR><LF>
+C: From: =?utf-8?b?2KjahtuM2YY=?= <info@support.becheen-mail.ir>
+C: Date: Mon, 27 Jan 2025 17:28:55 +0330
+C: Subject: =?utf-8?b?2qnYryDYqtin24zbjNivINio2obbjNmG?=
+C: Message-Id: <9LPT72EY8PU4.YIS4UWIJU2341@desktop-roogkoe>
+C: To: www.mahdiesteghlal@gmail.com
+C: MIME-Version: 1.0
+C: Content-Type: text/html; charset=utf-8
+C: 
+C: 93536
+C: .
+S: 250 Message queued.
+C: QUIT
+S: 221 Bye

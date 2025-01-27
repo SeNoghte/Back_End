@@ -97,7 +97,7 @@ public class UserSearchHandlerTests
 
 
         // Act  
-        var result = new EditProfileResult() { ErrorCode = 401, Message = "مشکلی پیش آمده است", Success = true };
+        var result = new EditProfileResult() { ErrorCode = 401, Message = "مشکلی پیش آمده است", Success = false };
         result = await _handler.Handle(result);
 
         // Assert  

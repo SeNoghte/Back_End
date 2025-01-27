@@ -18,6 +18,11 @@ public class ApplicationDBContext : DbContext
     public DbSet<EventTask> EventTasks { get; set; }
     public DbSet<EventTag> EventTags { get; set; }
 
+    public ApplicationDBContext()
+    {
+        
+    }
+
     public ApplicationDBContext(IConfiguration configuration)
     {
         this.configuration = configuration;

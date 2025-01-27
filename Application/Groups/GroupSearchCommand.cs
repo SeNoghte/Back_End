@@ -65,6 +65,7 @@ namespace Application.Groups
                 var groupsQuery = dBContext.Groups
                     .Include(g => g.Members)
                     .ThenInclude(ug => ug.User)
+                    .Include(g => g.Owner)
                     .OrderBy(g => g.Name);
 
                 if (request.Filter != null)
@@ -106,7 +107,16 @@ namespace Application.Groups
                     IsPrivate = g.IsPrivate,
                     Name = g.Name,
                     Description = g.Description,
-                    Image = g.Image
+                    Image = g.Image,
+                    CreatedDate  = g.CreatedDate,
+                    Owner = new UserDto
+                    {
+                        Name = g.Owner.Name,
+                        Username = g.Owner.Username,
+                        UserId = g.Owner.UserId,
+                        Email = g.Owner.Email,
+                        Image = g.Owner.Image
+                    }
                 }).ToList();
 
 

@@ -86,6 +86,10 @@ namespace Application.Events
                     GroupImage = e.Group.Image,
                     ImagePath = e.ImagePath,   
                     IsPrivate = e.IsPrivate,
+                    Address = e.Address,
+                    CityId = e.CityId,
+                    Latitude = e.Latitude,
+                    Longitude = e.Longitude,
                     Owner = new UserDto
                     {
                         UserId = e.Owner.UserId,

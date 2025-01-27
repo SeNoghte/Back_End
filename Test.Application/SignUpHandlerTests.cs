@@ -76,7 +76,7 @@ public class SignUpHandlerTests
 
         // Act
         var result = new SignUpResult();
-        result.Success = await _handler.Handle(command);
+        result.Success = await _handler.HandleAfter(command);
 
         // Assert
         Assert.True(result.Success);

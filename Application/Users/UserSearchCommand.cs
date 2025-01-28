@@ -63,7 +63,7 @@ namespace Application.Users
                 if (request.Filter != null)
                 {
                     usersQuery = usersQuery
-                        .Where(u => u.Username.ToLower().Contains(request.Filter.ToLower()))
+                        .Where(u => u.Username.ToLower().Contains(request.Filter.ToLower()) && u.UserId != userId)
                         .OrderBy(u => u.Username);
                 }
 
